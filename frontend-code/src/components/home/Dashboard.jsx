@@ -27,7 +27,7 @@ class Dashboard extends Component {
 
               <Route path='/dashboard/create' 
                   render={()=> {
-                  return <CreateMain parentData={this.state}/>
+                  return <CreateMain />
                   }}
               />
 

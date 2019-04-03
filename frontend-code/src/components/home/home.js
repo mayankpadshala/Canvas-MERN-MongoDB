@@ -20,8 +20,6 @@ import jwt_decode from 'jwt-decode';
 import {connect} from 'react-redux';
 import {getEnrolledCourses} from '../../redux/actions/profileActions'
 
-import axios from 'axios';
-
 
 const styles = {
   root_open: {

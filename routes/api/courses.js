@@ -79,7 +79,7 @@ router.post('/', passport.authenticate('jwt', {session: false}),(req, res) => {
                     User.findById(req.user.id)
                     .then(user => {
                         
-                        user.coursesEnrolled.unshift({ course: req.body.id });
+                        user.coursesEnrolled.unshift({ course: course.id });
 
                         user.save().then(user => {
                             console.log('User updated with added courses')

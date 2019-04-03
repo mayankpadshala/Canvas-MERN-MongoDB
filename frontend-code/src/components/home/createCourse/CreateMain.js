@@ -1,72 +1,20 @@
 import React, { Component } from 'react'
-import {Route, Switch, Link} from 'react-router-dom'
+import {Route, Switch, Link, Redirect, withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-// import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-// import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-// import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-
-
-import CourseCreate from './courseCreate'
+import Grid from '@material-ui/core/Grid';
+import jwt_decode from 'jwt-decode';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import {createCourse} from '../../../redux/actions/courseActions'
+import {connect} from 'react-redux';
 
 const drawerWidth = 240;
 
 const styles = theme => ({
-  root: {
+  root_main: {
     display: 'flex',
-  },
-  appBar: {
-      backgroundColor: '#FFFFFF',
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    // width: `calc(100% - ${drawerWidth}px)`,
-    // marginLeft: drawerWidth,
-    // transition: theme.transitions.create(['margin', 'width'], {
-    //   easing: theme.transitions.easing.easeOut,
-    //   duration: theme.transitions.duration.enteringScreen,
-    // }),
-  },
-  menuButton: {
-    marginLeft: 12,
-    marginRight: 20,
-    color: '#008ee2',
-  },
-  hide: {
-    display: 'none',
-  },
-  drawer: {
-    //   marginTop: '50px',
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-//   my changes start
-marginTop: '64px',
-//   my changes end
-    width: drawerWidth,
-  },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
   },
   content: {
     flexGrow: 1,
@@ -75,156 +23,245 @@ marginTop: '64px',
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: -drawerWidth,
-  },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  },
-  margin_set_open:{
-      marginLeft: 86,
-    },
-    margin_set_close:{
-        marginLeft: '72px',
-  },
-  padding_set_open:{
-      paddingLeft: 86,
-    },
-    padding_set_close:{
-        paddingLeft: 72,
-  },
-  left_set_open:{
-      left: 84,
-    },
-    left_set_close:{
-        left: 72,
   },
     drawerPaperOpen: {
         marginTop: '64px',
         marginLeft: '84px',
         width: drawerWidth,
     },
-    drawerPaperClose: {
-        marginTop: '64px',
-        marginLeft: '72px',
-        width: drawerWidth,
+    root: {
+      width: '100%',
+      maxWidth: 884,
+      backgroundColor: '#f5f5f5',
     },
-    textColor1:{
-        color: '#008ee2',
+    icon: {
+      margin: theme.spacing.unit,
+      fontSize: 32,
     },
-    link: {
-      textDecoration: 'none',
+    button: {
+      marginTop: 32
+    },
+    profileImg: {
+      marginTop: 32,
+      width: 128,
+      height: 128,
+    },
+    formFields: {
+      padding: 32
+    },
+    heading: {
+      margin: "16px 0px 0px 0px",
+      fontWeight: 'bold',
+      fontSize: '1.2em',
+    },
+    textDisplay: {
+      margin: "0px 0px 32px 8px",
+      fontWeight: 'bold',
     }
 });
 
 class CreateMain extends Component {
-
-    state = {
-        open: false,
-        parentDrawer: true,
-      };
-
-      componentWillReceiveProps(props) {
-        this.setState({
-            parentDrawer: props.parentData.open,
-        });
-        // console.log(props.parentData.open)
-        // console.log(this.state.parentDrawer)
-      }
-      handleDrawerOpen = () => {
-        this.setState({ open: true });
-      };
-    
-      handleDrawerClose = () => {
-        this.setState({ open: false });
-      };
-      handleDrawerToggleMenu = () => {
-        if (this.state.open) {
-            this.setState({ open: false });
-        }else{
-            this.setState({ open: true });
+      constructor() {
+        super()
+        this.state = {
         }
-      };
+      }
 
+      componentWillMount() {
+      
+        const token = localStorage.jwtToken;
+        
+        const decoded = jwt_decode(token);
+        // console.log(decoded);
+  
+        this.setState({
+          id: decoded.id,
+        })
+  
+      }
+
+      onChange = (e) => {
+        this.setState({[e.target.name]: e.target.value});
+      }
+
+      onSubmit = (e) => {
+        
+        e.preventDefault();        
+        // console.log(this.state)
+
+        const courseDetails = {
+            courseId: this.state.courseId,
+            courseName: this.state.courseName,
+            department: this.state.department,
+            description: this.state.description,
+            courseRoom: this.state.courseRoom,
+            courseCapacity: this.state.courseCapacity,
+            waitlistCapacity: this.state.waitlistCapacity,
+            createdBy: this.state.id
+        }
+        // console.log(courseDetails)
+
+        this.props.createCourse(courseDetails, this.props.history);
+
+      }
+      
 
     render() {
         const { classes, theme } = this.props;
-        const { open } = this.state;
-        let {parentDrawer} = this.state;
-        //Side Navigation Inside
-        
+      
 
-        // The Main part inside the code
-        const main = (
-            <div>
-                    <Route path="/" component={CourseCreate} /> 
+            return (
+                
+                <div className={classNames(classes.root_main)}>    
+                    <div className={classNames(classes.content, classes.drawerPaperOpen)}>
+                      <div>
+                          <Grid
+                              container
+                              direction="row"
+                              justify="space-evenly"
+                              // alignItems="center"
+                          >
+                              <Grid item xs={2}>
+                                  {/* <Avatar alt="Remy Sharp" src={ProfileImg} className={classes.profileImg} />  */}
+                              </Grid>
+                              <Grid item xs={8}>
+                                  <Grid
+                                      container
+                                      direction="column"
+                                      className={classes.formFields}
+                                      alignItems="left"
+                                  >
+                                      
+                                      <div style={{    display: "flex", flexDirection: "column"}}>               
+                                        <form className={classes.form} onSubmit={this.onSubmit}>
+                                          <div style={{    display: "flex", flexDirection: "column"}}>
+                                              <div className={classes.heading}>Course ID(only Numbers) : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="courseId"
+                                                onChange={this.onChange}
+                                              />
                                         
-            </div>
-        );
+                                              <div className={classes.heading}>Course Name : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="courseName"
+                                                onChange={this.onChange}
+                                              />
 
-        if (parentDrawer) {
-            return (
-                <div className={classNames(classes.root)}>
-                    <CssBaseline />
-                    
-                    
-                    <Drawer
-                    className={classNames(classes.drawer)}
-                    //   className={classes.drawer}
-                        variant="persistent"
-                        anchor="left"
-                    //   open={parentDrawer}
-                        open={open}
-                        
-                        classes={{
-                        paper: classes.drawerPaperOpen,
-                        }}
-                    >
-                        
-                        {/* {insideSideNav} */}
-                    </Drawer>
-                    <main
-                        className={classNames(classes.content, {
-                            [classes.contentShift]: open,
-                        })}
-                    >
-                        {main}
-                    </main>
+                                              <div className={classes.heading}>Department : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="department"
+                                                onChange={this.onChange}
+                                              />
+                                        
+                                              <div className={classes.heading}> Description : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="description"
+                                                onChange={this.onChange}
+                                              />
+
+                                              <div className={classes.heading}>Class Room : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="courseRoom"
+                                                onChange={this.onChange}
+                                              />
+                                        
+                                              <div className={classes.heading}>Course Capacity : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="courseCapacity"
+                                                onChange={this.onChange}
+                                              /> 
+
+                                        
+                                              <div className={classes.heading}>Waitlist Capacity : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="waitlistCapacity"
+                                                onChange={this.onChange}
+                                              />
+                                              
+                                              <div className={classes.heading}>Course Term : </div>
+                                              <TextField
+                                                // id="outlined-multiline-static
+                                                // multiline
+                                                rows="1"
+                                                className={classes.textField}
+                                                margin="normal"
+                                                variant="outlined"
+                                                required = "true"
+                                                name="term"
+                                                onChange={this.onChange}
+                                              />
+
+                                              <Button variant="contained" className={classes.button} type='submit'>
+                                                Submit
+                                              </Button>
+                                              
+                                          </div>
+                                        </form>
+                                      </div>
+
+                                  </Grid>
+                              </Grid>
+                              <Grid item xs={2}>
+                                  {/* <Button variant="outlined" className={classes.button} onClick={this.toggleEditButton}>
+                                      <EditIcon></EditIcon> Edit Profile
+                                  </Button>          */}
+                              </Grid>
+                          </Grid>                            
+                      </div>
                     </div>
+                </div>
+                
                 );
-        }else{
-            return (
-                <div className={classNames(classes.root)}>
-                    <CssBaseline />
-                    
-                    
-                    <Drawer
-                    className={classNames(classes.drawer, classes.left_set_open)}
-                    //   className={classes.drawer}
-                        variant="persistent"
-                        anchor="left"
-                    //   open={parentDrawer}
-                        open={open}
-                        
-                        classes={{
-                        paper: classes.drawerPaperClose,
-                        }}
-                    >
-                        {/* {insideSideNav} */}
-                    </Drawer>
-                    <main
-                        className={classNames(classes.content, {
-                        [classes.contentShift]: open,
-                        })}
-                    >
-                        {main}
-                    </main>
-                    </div>
-                );
-        }
+       
         
         }
     }
@@ -232,7 +269,11 @@ class CreateMain extends Component {
     CreateMain.propTypes = {
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
-};
+  };
+      
+  const mapStateToProps = (state) => ({
+   
+  })
+  
+  export default connect(mapStateToProps, { createCourse })(withStyles(styles)(withRouter(CreateMain)));
 
-    
-export default withStyles(styles, { withTheme: true })(CreateMain);
