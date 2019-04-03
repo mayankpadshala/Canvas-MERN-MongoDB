@@ -101,7 +101,7 @@ class ChildNav extends React.Component {
   render() {
 
     // this.selectCourse();
-    console.log(this.props)
+    // console.log(this.props)
     const { classes } = this.props;
     const accountNav = (
       <div className={classNames(classes.list ,this.props.nav.childNavAccount ? classes.setMarginOpen : classes.setMarginClose)}>

@@ -3,7 +3,7 @@ import { SET_CURRENT_COURSES, CHANGE_SIDENAV_STATE, CHANGE_CHILDNAV_ACCOUNT, CHA
 const initialState = {
     sideNav: true,
     rootDrawerWidth: 86,
-    childNavAccount: true,
+    childNavAccount: false,
     childNavCourse: false,
     courses: [],
 }

@@ -37,7 +37,7 @@ router.get('/test', (req, res) => res.json({ msg: 'Users Works' }));
 //@desc Register a User route
 //@access Public
 router.post('/register', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const {errors, isValid} = validateRegisterInput(req.body);
 
     console.log(isValid)
@@ -79,7 +79,7 @@ router.post('/register', (req, res) => {
                     newUser
                     .save()
                     .then(user => {
-                        console.log("New User Created");
+                        // console.log("New User Created");
                         res.json(user)
                     })
                     .catch(err => {
@@ -144,9 +144,9 @@ router.post('/login', (req, res) => {
 //@desc Return current user
 //@access Private
 router.get('/current', passport.authenticate('jwt', {session: false}), (req, res) => {
-    console.log(req.cookie);
-    console.log("================================");
-    console.log(req.session);
+    // console.log(req.cookie);
+    // console.log("================================");
+    // console.log(req.session);
     res.json({
         id: req.user.id,
         fname: req.user.fname,

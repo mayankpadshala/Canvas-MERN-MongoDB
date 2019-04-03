@@ -239,7 +239,8 @@ class Home extends React.Component {
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
-  nav: PropTypes.object.isRequired,userProfile: PropTypes.object.isRequired,
+  nav: PropTypes.object.isRequired,
+  userProfile: PropTypes.object.isRequired,
 };
     
 const mapStateToProps = (state) => ({

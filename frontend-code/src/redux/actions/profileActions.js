@@ -7,7 +7,7 @@ export const getCurrentProfile = () => dispatch => {
     // console.log(userData);
 
     axios
-    .get('/api/profiles')
+    .get('/api/profiles/')
     .then(res => {
         console.log(res);
         dispatch({
@@ -16,6 +16,7 @@ export const getCurrentProfile = () => dispatch => {
         })
     })
     .catch(err => {
+        console.log(err)
         dispatch({
             type: GET_USER_PROFILE,
             payload: {}
@@ -31,7 +32,7 @@ export const getCurrentProfile = () => dispatch => {
 export const createProfile = (profileData, history) => dispatch => {
     // console.log(profileData)
     axios
-      .post('/api/profiles', profileData)
+      .post('/api/profiles/edit', profileData)
       .then(res => {
           dispatch({
               type: GET_USER_PROFILE,
@@ -51,7 +52,7 @@ export const createProfile = (profileData, history) => dispatch => {
 export const getEnrolledCourses = () => dispatch => {
   console.log("getting enrolled courses")
   axios
-      .get('/api/courses/getEnrolledCourses')
+      .get('/api/courses/getEnrolledCourses/')
       .then(res => 
             dispatch({
               type: GET_ENROLLED_COURSES,

@@ -41,13 +41,18 @@ export const loginUser = (userData , history ) => dispatch => {
         dispatch(setCurrentUser(decoded));
 
         history.push('/dashboard')
+        
+        dispatch({
+            type: GET_ERRORS,
+            payload: {}
+        })
     })
     .catch(err => {
         console.log(err)
-        // dispatch({
-        //     type: GET_ERRORS,
-        //     payload: err.response.data
-        // })
+        dispatch({
+            type: GET_ERRORS,
+            payload: err.response.data
+        })
     })  
 }
 

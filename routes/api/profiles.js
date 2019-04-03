@@ -96,10 +96,11 @@ router.get('/', passport.authenticate('jwt', {session: false}),(req, res) => {
     Profile.findOne({user : req.user.id})
     .populate('user', ['fname', 'lname', 'email', 'sjsuId', 'avatar'])
     .then(profile => {
-        console.log(profile)
+        // console.log(profile)
         if(!profile) {
-            errors.noprofile = "There is no profile for this user"
-            return res.status(404).json(errors);
+            // errors.noprofile = "There is no profile for this user"
+            // return res.status(404).json(errors);
+            return res.json({})
         }
         res.json(profile)
     })
@@ -111,7 +112,7 @@ router.get('/', passport.authenticate('jwt', {session: false}),(req, res) => {
 //@route POST api/profiles
 //@desc Create profile or update the profile
 //@access Private
-router.post('/', passport.authenticate('jwt', {session: false}),(req, res) => {
+router.post('/edit', passport.authenticate('jwt', {session: false}),(req, res) => {
     const {errors, isValid} = validateProfileInput(req.body);
 
     //Check Validation
@@ -121,7 +122,7 @@ router.post('/', passport.authenticate('jwt', {session: false}),(req, res) => {
 
     const profileFields = {};
 
-    console.log(req.body);
+    // console.log(req.body);
 
      profileFields.user = req.user.id;
      profileFields.handle = req.body.handle;

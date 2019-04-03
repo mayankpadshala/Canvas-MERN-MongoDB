@@ -97,6 +97,7 @@ class CreateMain extends Component {
             courseRoom: this.state.courseRoom,
             courseCapacity: this.state.courseCapacity,
             waitlistCapacity: this.state.waitlistCapacity,
+            term: this.state.term,
             createdBy: this.state.id
         }
         // console.log(courseDetails)

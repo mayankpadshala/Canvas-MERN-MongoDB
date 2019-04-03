@@ -150,7 +150,7 @@ class SideNav extends Component {
     const token = localStorage.jwtToken;
     const decoded = jwt_decode(token);
 
-    console.log(decoded);
+    // console.log(decoded);
     // localStorage.setItem('selectedcourse', '');
 
     this.setState({
@@ -211,7 +211,7 @@ class SideNav extends Component {
 
   render() {
         const { classes, theme } = this.props;
-        console.log(this.props);
+        // console.log(this.props);
         return (
           <div className={classes.root}>
             <CssBaseline />

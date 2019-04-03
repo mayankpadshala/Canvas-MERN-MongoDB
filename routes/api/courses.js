@@ -237,7 +237,7 @@ router.get('/getEnrolledCourses', passport.authenticate('jwt', {session: false})
     User.findById(req.user.id)
     .populate('coursesEnrolled.course')
     .then(user => {
-        console.log(user);
+        // console.log(user);
         // user.coursesEnrolled.map(key => {
         //     // console.log(key);
         //     console.log("--------")
@@ -270,6 +270,62 @@ router.get('/getEnrolledUsers', passport.authenticate('jwt', {session: false}),(
 
 })
 
+//@route POST api/courses/getBycourseId/
+//@desc Get courses by dearch Criteria of find by Id
+//@access Private
+router.post('/getBycourseId',passport.authenticate('jwt', {session: false}),(req, res) => {
+    console.log(req.body)
+    if(req.body.courseFilter === 'is exactly') {
+        Course.find({courseId: req.body.courseId})
+        .then(course => {
+            res.json(course)
+        })
 
+    } else if(req.body.courseFilter === 'greater than or equal to') {
+        Course.find({
+            courseId: { $gt : req.body.courseId - 1}
+        })
+        .then(courses => {
+            // console.log(courses)
+            res.json(courses)
+        })
+    } else if(req.body.courseFilter === 'less than or eqaul to') {
+        Course.find({
+            courseId: { $lt : req.body.courseId + 1}
+        })
+        .then(courses => {
+            // console.log(courses)
+            res.json(courses)
+        })
+    } else {
+
+    }
+})
+
+//@route POST api/courses/getBycourseTerm/
+//@desc Get courses by search Criteria of find by term
+//@access Private
+router.post('/getBycourseTerm',passport.authenticate('jwt', {session: false}),(req, res) => {
+    
+        Course.find({term: req.body.term})
+        .then(course => {
+            res.json(course)
+        })
+
+    
+})
+
+//@route POST api/courses/getBycourseName/
+//@desc Get courses by search Criteria of find by courseName
+//@access Private
+router.post('/getBycourseName',passport.authenticate('jwt', {session: false}),(req, res) => {
+    
+    Course.find({courseName: req.body.courseName})
+    .then(course => {
+        res.json(course)
+    })
+
+
+})
 
 module.exports = router;
