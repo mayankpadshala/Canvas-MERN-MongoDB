@@ -47,16 +47,20 @@ const styles = theme => ({
       height: 128,
     },
     formFields: {
-      padding: 32
+      padding: "0 32"
     },
     heading: {
       margin: "16px 0px 0px 0px",
       fontWeight: 'bold',
-      fontSize: '1.2em',
+      fontSize: '1em',
     },
     textDisplay: {
       margin: "0px 0px 32px 8px",
       fontWeight: 'bold',
+    },
+    textField: {
+      padding: '0px',
+      border: '1px solid #d5d5d5'
     }
 });
 
@@ -109,11 +113,18 @@ class CreateMain extends Component {
 
     render() {
         const { classes, theme } = this.props;
-      
+
+        const selectTerm = [
+           "Spring 2019",
+            "Fall 2019",
+            "Spring 2020",
+        ]
+        
 
             return (
                 
                 <div className={classNames(classes.root_main)}>    
+                {/* {console.log(this.state)} */}
                     <div className={classNames(classes.content, classes.drawerPaperOpen)}>
                       <div>
                           <Grid
@@ -136,16 +147,16 @@ class CreateMain extends Component {
                                       <div style={{    display: "flex", flexDirection: "column"}}>               
                                         <form className={classes.form} onSubmit={this.onSubmit}>
                                           <div style={{    display: "flex", flexDirection: "column"}}>
-                                              <div className={classes.heading}>Course ID(only Numbers) : </div>
+                                              <div className={classes.heading}>Course ID* : </div>
                                               <TextField
                                                 // id="outlined-multiline-static
                                                 // multiline
                                                 rows="1"
-                                                className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
+                                                padding='0'
                                                 required = "true"
                                                 name="courseId"
+                                                className={classes.textField}
                                                 onChange={this.onChange}
                                               />
                                         
@@ -155,8 +166,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="courseName"
                                                 onChange={this.onChange}
@@ -168,8 +178,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="department"
                                                 onChange={this.onChange}
@@ -181,8 +190,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="description"
                                                 onChange={this.onChange}
@@ -194,8 +202,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="courseRoom"
                                                 onChange={this.onChange}
@@ -207,8 +214,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="courseCapacity"
                                                 onChange={this.onChange}
@@ -221,8 +227,7 @@ class CreateMain extends Component {
                                                 // multiline
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="waitlistCapacity"
                                                 onChange={this.onChange}
@@ -232,14 +237,27 @@ class CreateMain extends Component {
                                               <TextField
                                                 // id="outlined-multiline-static
                                                 // multiline
+                                                select='true'
+                                                value={this.state.selectTerm}
+                                                SelectProps={{
+                                                  native: true,
+                                                  MenuProps: {
+                                                  className: classes.menu,
+                                                  },
+                                                }}
                                                 rows="1"
                                                 className={classes.textField}
-                                                margin="normal"
-                                                variant="outlined"
+                                                margin="auto"
                                                 required = "true"
                                                 name="term"
                                                 onChange={this.onChange}
-                                              />
+                                              >
+                                              {selectTerm.map(option => (
+                                                    <option key={option} value={option}>
+                                                    {option}
+                                                    </option>
+                                                ))}
+                                              </TextField>
 
                                               <Button variant="contained" className={classes.button} type='submit'>
                                                 Submit

@@ -36,17 +36,17 @@ const styles = theme => ({
     cursor: 'pointer',
   },
   formFields: {
-    padding: 32
+    padding: "18px 32px"
   },
   heading: {
     margin: "16px 0px 0px 0px",
     fontWeight: 'bold',
-    fontSize: '1.2em',
+    fontSize: '1em',
   },
   textDisplay: {
     margin: "0px 0px 32px 8px",
     fontWeight: 'bold',
-  }
+  },
 });
 
 class Profile extends React.Component {

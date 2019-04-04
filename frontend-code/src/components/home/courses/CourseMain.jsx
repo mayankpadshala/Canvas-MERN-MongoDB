@@ -230,7 +230,7 @@ class CourseMain extends Component {
 
                   <Route  path='/dashboard/courses/addcode' 
                              render={()=> {
-                              return <AddCode COURSEID={this.state.selectedCourse}/>
+                              return <AddCode/>
                              }}
                     />
                                       
@@ -311,7 +311,7 @@ class CourseMain extends Component {
                           <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" className={classNames(classes.textColor1)} noWrap>
-                          {this.props.selectedCourse}
+                        {this.props.selectedCourse.selectedCourse.courseName + ' : ' + this.props.selectedCourse.selectedCourse.courseId}
                         </Typography>
                       </Toolbar>
                     </AppBar>

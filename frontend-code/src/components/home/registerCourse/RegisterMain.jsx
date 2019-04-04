@@ -250,7 +250,7 @@ class RegisterMain extends Component {
   render() {
         const { classes, theme } = this.props;
         const courseFilters = ["is exactly", "greater than or equal to", "less than or eqaul to"];
-        const terms = ["Spring 2019", "Fall 2019"];
+        const terms = ["Spring 2019", "Fall 2019","Spring 2020"];
         const categories = ['By Course ID', 'By Term', 'By Course Name'];
         
         const enrolledCourses = this.props.userProfile.enrolledCourses
