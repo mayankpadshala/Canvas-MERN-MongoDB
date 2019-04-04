@@ -18,11 +18,16 @@ import ListItem from '@material-ui/core/ListItem';
 // import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {connect} from 'react-redux';
-import axios from 'axios';
 
 import {getCourse} from '../../../redux/actions/courseActions'
 
-import jwt_decode from 'jwt-decode';
+import Assignment from './assignments/assignments'
+import Announcements from './announcements/announcements'
+import Grades from './grades/grades'
+import People from './People/people'
+import Files from './files/files'
+import Quizzes from './quizzes/quizzes'
+import AddCode from './addCode/addcode'
 
 const drawerWidth = 240;
 
@@ -131,10 +136,10 @@ class CourseMain extends Component {
     };
 
     componentWillMount() {
-      var url = new URL(window.location.href);
-      var courseid = url.searchParams.get("id");
-      console.log(courseid);
-      this.props.getCourse(courseid);
+      // var url = new URL(window.location.href);
+      // var courseid = url.searchParams.get("id");
+      console.log(this.props.selectedCourse.courseClicked);
+      this.props.getCourse(this.props.selectedCourse.courseClicked);
       
     }
 
@@ -189,45 +194,45 @@ class CourseMain extends Component {
         // The Main part inside the code
         const main = (
             <div>   
-                    {/* <Route  path='/student/courses/assignments' 
+                    <Route  path='/dashboard/courses/assignments' 
                              render={()=> {
-                              return <Assignment COURSEID={this.state.selectedCourse}/>
+                              return <Assignment />
                              }}
                     />
 
-                    <Route  path='/student/courses/announcement' 
+                    <Route  path='/dashboard/courses/announcement' 
                              render={()=> {
-                              return <Announcements COURSEID={this.state.selectedCourse}/>
+                              return <Announcements />
                              }}
                     />
-                    <Route  path='/student/courses/grades' 
+                    <Route  path='/dashboard/courses/grades' 
                              render={()=> {
-                              return <Grades COURSEID={this.state.selectedCourse}/>
-                             }}
-                    />
-
-                    <Route  path='/student/courses/people' 
-                             render={()=> {
-                              return <People COURSEID={this.state.selectedCourse}/>
-                             }}
-                    />
-                    <Route  path='/student/courses/files' 
-                             render={()=> {
-                              return <Files COURSEID={this.state.selectedCourse}/>
+                              return <Grades />
                              }}
                     />
 
-                    <Route  path='/student/courses/quizzes' 
+                    <Route  path='/dashboard/courses/people' 
                              render={()=> {
-                              return <Quizzes COURSEID={this.state.selectedCourse}/>
+                              return <People />
+                             }}
+                    />
+                    <Route  path='/dashboard/courses/files' 
+                             render={()=> {
+                              return <Files />
                              }}
                     />
 
-                  <Route  path='/student/courses/addcode' 
+                    <Route  path='/dashboard/courses/quizzes' 
+                             render={()=> {
+                              return <Quizzes />
+                             }}
+                    />
+
+                  <Route  path='/dashboard/courses/addcode' 
                              render={()=> {
                               return <AddCode COURSEID={this.state.selectedCourse}/>
                              }}
-                    /> */}
+                    />
                                       
             </div>
         );

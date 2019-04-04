@@ -42,10 +42,6 @@ export const loginUser = (userData , history ) => dispatch => {
 
         history.push('/dashboard')
         
-        dispatch({
-            type: GET_ERRORS,
-            payload: {}
-        })
     })
     .catch(err => {
         console.log(err)

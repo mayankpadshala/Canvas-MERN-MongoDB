@@ -19,6 +19,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import jwt_decode from 'jwt-decode';
 import {connect} from 'react-redux';
 import {getEnrolledCourses} from '../../redux/actions/profileActions'
+import {getSelectedCourse} from '../../redux/actions/courseActions'
 
 
 const styles = {
@@ -186,11 +187,10 @@ class Home extends React.Component {
               <Grid item xs={4} key={key} >
                 
                     <Card className={classes.card} style={{margin: '16px'}} >
-                      <Link
+                      <Button
                         key={index}
-                        style={{textDecoration: 'none'}}   
-                        to={`/dashboard/courses/?id=${this.props.userProfile.enrolledCourses[key].course._id}`}
-                        onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course.courseId)}}
+                        style={{textDecoration: 'none'}}  
+                        onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course._id, this.props.history)}}
                       >
                       <CardActionArea>
                         <CardMedia
@@ -223,7 +223,7 @@ class Home extends React.Component {
                           Learn More
                         </Button> */}
                       </CardActions>
-                    </Link>
+                    </Button>
                     </Card>
                 </Grid>       
               ))}
@@ -250,4 +250,4 @@ const mapStateToProps = (state) => ({
     
 
 
-export default connect(mapStateToProps, { getEnrolledCourses })(withStyles(styles)(withRouter(Home)));
+export default connect(mapStateToProps, { getEnrolledCourses, getSelectedCourse })(withStyles(styles)(withRouter(Home)));

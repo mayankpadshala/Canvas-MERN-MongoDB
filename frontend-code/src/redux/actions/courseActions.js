@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {GET_ERRORS, SET_SELECTED_COURSE} from './types';
+import {GET_ERRORS, SET_SELECTED_COURSE, SET_SELECTION_COURSE} from './types';
 import setAuthToken from '../../utils/setAuthToken'
 
 //Register User
@@ -43,5 +43,14 @@ export const getCourse = (courseid) => dispatch => {
             payload: err.response.data
         })
     })
+}
+
+export const getSelectedCourse = (courseid, history) => dispatch => {
+    dispatch({
+        type: SET_SELECTION_COURSE,
+        payload: courseid
+    })
+    history.push('/dashboard/courses/');
+
 }
 

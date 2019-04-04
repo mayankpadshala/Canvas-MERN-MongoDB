@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {GET_ERRORS, GET_USER_PROFILE, GET_ENROLLED_COURSES} from './types';
+import setAuthToken from '../../utils/setAuthToken'
 
 
 //Login Get User token
@@ -50,7 +51,10 @@ export const createProfile = (profileData, history) => dispatch => {
 
 // Get enrolled Courses
 export const getEnrolledCourses = () => dispatch => {
-  console.log("getting enrolled courses")
+  const token = localStorage.jwtToken
+  //Set token to auth header
+  setAuthToken(token);
+  // console.log("getting enrolled courses")
   axios
       .get('/api/courses/getEnrolledCourses/')
       .then(res => 
