@@ -97,6 +97,22 @@ router.post('/', passport.authenticate('jwt', {session: false}),(req, res) => {
 
 })
 
+//@route POST api/courses/getCourse/
+//@desc Enroll a course
+//@access Private
+router.post('/getCourse', passport.authenticate('jwt', {session: false}),(req, res) => {
+    
+    console.log(req.body.id)
+
+    Course.findById(req.body.id)
+    .then(course => {
+        res.json(course);
+    })
+    .catch(err => {
+        res.json(err);
+    })
+})
+
 //@route POST api/courses/enroll/
 //@desc Enroll a course
 //@access Private

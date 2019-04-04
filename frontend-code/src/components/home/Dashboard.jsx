@@ -8,6 +8,7 @@ import Home from './home'
 
 import CreateMain from './createCourse/CreateMain'
 import RegisterMain from './registerCourse/RegisterMain'
+import CourseMain from './courses/CourseMain'
 
 class Dashboard extends Component {
   render() {
@@ -35,6 +36,12 @@ class Dashboard extends Component {
               <Route path='/dashboard/register' 
                   render={()=> {
                   return <RegisterMain />
+                  }}
+              />
+
+              <Route path='/dashboard/courses' 
+                  render={()=> {
+                  return <CourseMain />
                   }}
               />
 

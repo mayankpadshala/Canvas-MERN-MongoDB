@@ -163,9 +163,9 @@ class ChildNav extends React.Component {
               <Link
               key={index}
               style={{textDecoration: 'none'}}   
-              to="/dashboard/courses/assignments" 
+              to={`/dashboard/courses/?id=${this.props.userProfile.enrolledCourses[key].course._id}` }
             >
-             <ListItem button onClick={() => {this.setState({selectedCourse: this.props.userProfile.enrolledCourses[key].course.courseId}); this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course.courseId)}}>
+             <ListItem button >
                <ListItemText primary={this.props.userProfile.enrolledCourses[key].course.department + " " + this.props.userProfile.enrolledCourses[key].course.courseId + " : " +this.props.userProfile.enrolledCourses[key].course.courseName + " "  }/>
                {/* <Button onClick={this.selectCourse(text[1])}> Select</Button> */}
              </ListItem>

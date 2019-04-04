@@ -189,7 +189,7 @@ class Home extends React.Component {
                       <Link
                         key={index}
                         style={{textDecoration: 'none'}}   
-                        to="/dashboard/courses/assignments" 
+                        to={`/dashboard/courses/?id=${this.props.userProfile.enrolledCourses[key].course._id}`}
                         onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course.courseId)}}
                       >
                       <CardActionArea>
