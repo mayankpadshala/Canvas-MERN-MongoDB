@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 
 import {getCourse} from '../../../redux/actions/courseActions'
 
-import Assignment from './assignments/assignments'
+import AssignmentMain from './assignments/assignmentsMain'
 import Announcements from './announcements/announcements'
 import Grades from './grades/grades'
 import People from './People/people'
@@ -196,7 +196,7 @@ class CourseMain extends Component {
             <div>   
                     <Route  path='/dashboard/courses/assignments' 
                              render={()=> {
-                              return <Assignment />
+                              return <AssignmentMain />
                              }}
                     />
 

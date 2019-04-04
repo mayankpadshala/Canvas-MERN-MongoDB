@@ -20,6 +20,7 @@ import {connect} from 'react-redux';
 import { getCourses, changeChildNavAccount, changeChildNavCourse } from '../../redux/actions/navActions'
 
 import {logoutUser} from '../../redux/actions/authActions';
+import {getSelectedCourse} from '../../redux/actions/courseActions'
 
 
 
@@ -160,16 +161,16 @@ class ChildNav extends React.Component {
         
             {
               Object.keys(this.props.userProfile.enrolledCourses).map((key, index) => (
-              <Link
+              <Button
               key={index}
               style={{textDecoration: 'none'}}   
-              to={`/dashboard/courses/?id=${this.props.userProfile.enrolledCourses[key].course._id}` }
+              onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course._id, this.props.history)}} 
             >
              <ListItem button >
                <ListItemText primary={this.props.userProfile.enrolledCourses[key].course.department + " " + this.props.userProfile.enrolledCourses[key].course.courseId + " : " +this.props.userProfile.enrolledCourses[key].course.courseName + " "  }/>
                {/* <Button onClick={this.selectCourse(text[1])}> Select</Button> */}
              </ListItem>
-            </Link>
+            </Button>
           ))}
           {/* </List> */}
         <Divider />
@@ -228,4 +229,4 @@ const mapStateToProps = (state) => ({
   nav : state.nav,
   auth : state.auth
 })
-export default connect(mapStateToProps, { getCourses,  changeChildNavAccount, changeChildNavCourse , logoutUser })(withStyles(styles)(withRouter(ChildNav)));
+export default connect(mapStateToProps, { getCourses,  changeChildNavAccount, changeChildNavCourse , logoutUser, getSelectedCourse })(withStyles(styles)(withRouter(ChildNav)));
