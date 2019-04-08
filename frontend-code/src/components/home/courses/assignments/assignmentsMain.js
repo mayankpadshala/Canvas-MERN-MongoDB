@@ -1,4 +1,6 @@
 import React from 'react';
+import {Route, Switch, Link, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -14,25 +16,29 @@ import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import jwt_decode from 'jwt-decode';
-import { Paper } from '@material-ui/core';
+import { Paper} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { Page } from 'react-pdf';
 import { Document } from 'react-pdf/dist/entry.webpack';
-import PDF from "react-pdf-js";
-import ViewSubmissions from './viewSubmissions'
-
-import {uploadAssignment, getAssignByCourse, delAssignment, uploadSubmission} from '../../UserFunctions'
+import CreateAssignment from './createAssignment'
+import ViewAssignment from './viewAssignments'
+import {courseSection} from '../../../../redux/actions/courseActions'
 
 
 const styles = theme => ({
-  root: {
-    width: '100%',
-    maxWidth: 884,
-    backgroundColor: '#f0f0f0',
-    padding: '32px',
-    border: '0.5px solid black',
-    margin: '120px 0px 0px 120px',
+root: {
+  width: '100%',
+  maxWidth: 884,
+  backgroundColor: '#f0f0f0',
+  padding: '32px',
+  border: '0.5px solid black',
+  margin: '60px 0px 0px 120px',
+},
+root_header: {
+  width: 'auto',
+  margin: '120px 0px 0px 120px',
+  textAlign: 'center'
 },
 root1: {
     width: '100%',
@@ -93,168 +99,60 @@ class AssignmentMain extends React.Component {
   state = {
     open: true,
     openPast: false,
-    create: false,
-    file: null,
-    assignments: [],
-    numPages: null,
-    pageNumber: 1,
-    displayFile: '',
-    view: false,
-    submission: false,
-    submissionFile: null,
-    currentSubmissionId: 0,
-    viewSubmission: false,
-    currentAssignementId: 0,
+    isFaculty: false,
   };
 
-  
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
+  initialRender = () => {
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
+    // console.log(decoded);
 
-  handleClickPast = () => {
-    this.setState(state => ({ openPast: !state.openPast }));
+    this.setState({
+      isFaculty: decoded.faculty,
+    })
+
+    // getAssignByCourse(this.props.COURSEID)
+    // .then(res => {
+    //   // console.log(res);
+    //   this.setState({assignments: res});
+    // })
   }
+
+  componentWillMount() {
+    this.initialRender()
+  }
+  
+  
 
   render() {
     const { classes } = this.props;
     // console.log(this.state);
 
-    const studentAssignments = (
-      <div>
-  
-        <List
-          component="nav"
-          // subheader={<ListSubheader component="div">Nested List Items</ListSubheader>}
-          className={classes.root}
-          >
-            <ListItem button onClick={this.handleClick}>
-              {this.state.open ? <ExpandLess /> : <ExpandMore />}
-              
-              <Typography variant="h6" gutterBottom> 
-                <strong>Upcoming Assignments</strong>
-              </Typography>
-              
-            </ListItem>
-            <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.listItemText}>
-                  
-            {Object.keys(this.state.assignments).filter(ky => this.compareDate(this.state.assignments[ky].DUEDATE)).map((key, index) => (
-                          
-                          <Grid
-                              key={`${index}`}
-                              container
-                              direction="row"
-                              justify="center"
-                              alignItems="center"
-                              className={classes.bgPaper}
-                          >
-                              <Grid item xs={1}>
-                                  <AssignmentIcon className={classes.icon} />
-                              </Grid>
-                              <Grid item xs={9}>
-                                  <Grid
-                                      container
-                                      direction="column"
-                                      justify="flex-start"
-                                      alignItems="flex-start"
-                                  >
-                                      <Typography variant="h6" gutterBottom>
-                                          <strong>{this.state.assignments[key].NAME}</strong>
-                                      </Typography>
-                                      <Typography variant="body1" gutterBottom>
-                                          {/* <strong>Available until</strong> {this.state.assignments[key].NAME} |&nbsp; */}
-                                          <strong>Due</strong> {this.state.assignments[key].DUEDATE} |&nbsp;
-                                          <strong>-/{this.state.assignments[key].TOTALPOINTS}</strong> pts
-                                      </Typography>
-                                      <Typography>
-                                      <a href={this.state.assignments[key].FILEPATH}>DOWNLOAD FILE</a>
-                                      </Typography>
-  
-                                  </Grid>
-                              </Grid>
-                              <Grid item xs={1}>
-                                  <button onClick={() => {this.setState({displayFile: this.state.assignments[key].FILEPATH, view: true})}}>View</button>
-                                  
-                              </Grid>
-                              <Grid item xs={1}>
-                                  <button onClick={() => {this.showSubmission(this.state.assignments[key].ID)}}>Submit</button>
-                              </Grid>
-                          </Grid>
-                          
-                      ))}
-  
-            </Collapse>
-            <Divider className={classes.divider}/>
-            {/* Past Assignments */}
-            <ListItem button onClick={this.handleClickPast}>
-              {this.state.openPast ? <ExpandLess /> : <ExpandMore />}
-              
-              <Typography variant="h6" gutterBottom> 
-                <strong>Past Assignments</strong>
-              </Typography>
-              
-            </ListItem>
-            <Collapse in={this.state.openPast} timeout="auto" unmountOnExit className={classes.listItemText}>
-                  
-            {Object.keys(this.state.assignments).filter(ky => !this.compareDate(this.state.assignments[ky].DUEDATE)).map((key, index) => (
-                          
-                          <Grid
-                              key={`${index}`}
-                              container
-                              direction="row"
-                              justify="center"
-                              alignItems="center"
-                              className={classes.bgPaper}
-                          >
-                              <Grid item xs={1}>
-                                  <AssignmentIcon className={classes.icon} />
-                              </Grid>
-                              <Grid item xs={9}>
-                                  <Grid
-                                      container
-                                      direction="column"
-                                      justify="flex-start"
-                                      alignItems="flex-start"
-                                  >
-                                      <Typography variant="h6" gutterBottom>
-                                          <strong>{this.state.assignments[key].NAME}</strong>
-                                      </Typography>
-                                      <Typography variant="body1" gutterBottom>
-                                          {/* <strong>Available until</strong> {this.state.assignments[key].NAME} |&nbsp; */}
-                                          <strong>Due</strong> {this.state.assignments[key].DUEDATE} |&nbsp;
-                                          
-                                          
-                                          <strong>-/{this.state.assignments[key].TOTALPOINTS}</strong> pts |&nbsp;
+   
 
-                                           
-                                      </Typography>
-                                      <Typography>
-                                      <a href={this.state.assignments[key].FILEPATH}>DOWNLOAD FILE</a>
-                                      </Typography>
-  
-                                  </Grid>
-                              </Grid>
-                              <Grid item xs={1}>
-                                  <button onClick={() => {this.setState({displayFile: this.state.assignments[key].FILEPATH, view: true})}}>View</button>
-                              </Grid>
-                              {/* <Grid item xs={1}>
-                                  <button onClick={() => {this.showSubmission()}}>Submit</button>
-                              </Grid> */}
-                          </Grid>
-                          
-                      ))}
-  
-            </Collapse>
-  
-            </List>
-  
+    const header = (
+      <div className={classes.root_header}>
+
+        {this.state.isFaculty ? 
+        <Button color='primary' onClick={() => {this.props.courseSection('createAssignment', this.props.history)}}>Create Assignment</Button>
+        : 
+        // <Button variant='contained' color='primary' disabled='true'>Assignments</Button>
+        <div></div> 
+        }
       </div>
     )
 
     return (
       <div style={{marginTop: '32px'}}>
-        
-        {studentAssignments}
+
+          {header}
+
+          
+          <Route path="/" 
+              render={()=> {
+              return <ViewAssignment/>
+              }} 
+          />
         
       </div>
     );
@@ -263,6 +161,15 @@ class AssignmentMain extends React.Component {
 
 AssignmentMain.propTypes = {
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  nav: PropTypes.object.isRequired,
+  selectedCourse: PropTypes.object.isRequired,
 };
+  
 
-export default withStyles(styles)(AssignmentMain);
+const mapStateToProps = (state) => ({
+  nav : state.nav,
+  selectedCourse : state.selectedCourse
+})
+
+export default connect(mapStateToProps, { courseSection })(withStyles(styles)(withRouter(AssignmentMain)));

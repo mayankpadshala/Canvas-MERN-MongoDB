@@ -22,8 +22,6 @@ import { getCourses, changeChildNavAccount, changeChildNavCourse } from '../../r
 import {logoutUser} from '../../redux/actions/authActions';
 import {getSelectedCourse} from '../../redux/actions/courseActions'
 
-
-
 const styles = theme => ({
   
   list: {
@@ -80,13 +78,24 @@ class ChildNav extends React.Component {
     const decoded = jwt_decode(token);
     
     this.setState({
-      avatar: decoded.avatar,
+      avatar: this.props.userProfile.profile.avatar,
       fname: decoded.fname,
       lname: decoded.lname,
     })
 
   }
 
+  componentWillMount() {
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
+    
+    this.setState({
+      avatar: this.props.userProfile.profile.avatar,
+      fname: decoded.fname,
+      lname: decoded.lname,
+    })
+
+  }
 
   constructor (props) {
     super(props)
@@ -113,7 +122,7 @@ class ChildNav extends React.Component {
                 </div>
         <Grid container justify = "center" direction="column" alignItems="center">
           {/* <Avatar className={classes.lettersAvtar}>MP</Avatar> */}
-          <Avatar alt="Remy Sharp" src={this.state.avatar} className={classes.profileImg} /> 
+          <Avatar alt="Remy Sharp" src={this.props.userProfile.profile.avatar} className={classes.profileImg} /> 
           <Typography variant="h5" gutterBottom>
             {this.state.fname + " " + this.state.lname}
           </Typography>

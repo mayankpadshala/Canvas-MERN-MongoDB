@@ -14,9 +14,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import jwt_decode from 'jwt-decode';
 // import SearchBar from 'material-ui-search-bar';
 import Grid from '@material-ui/core/Grid';
-
-import {getEnrolledPeople, getUser, deleteUser} from '../../UserFunctions';
-
+import {Route, Switch, Link, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux';
+import axios from 'axios';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -33,7 +33,8 @@ const styles = theme => ({
   root: {
     boxShadow: 'none',
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 8,
+    marginLeft: 120
     // overflowX: 'auto',
   },
   table: {
@@ -65,112 +66,40 @@ const styles = theme => ({
 });
 
 
-
-
-// const rows = [ {
-//                   name: 'Mayank Padshala',
-//                   section: 'Section 1',
-//                   role: 'Student',
-//                 },
-//                 {
-//                   name: 'Arivoli',
-//                   section: 'Section 1',
-//                   role: 'Teacher',
-//                 },
-//                 {
-//                   name: 'Anurag',
-//                   section: 'Section 1',
-//                   role: 'TA',
-//                 }, 
-//              ];
-
 class People extends React.Component {
 
   state = {
-    enrolledPeople: [],
-    SJSUID: '',
-    FLAG: ''
+
   };
-
-  initialRender = () => {
-    const token = localStorage.usertoken;
-    const decoded = jwt_decode(token);
-
-    this.setState({
-      SJSUID: decoded.SJSUID,
-      FLAG: decoded.FLAG
-    })
-
-    // console.log(this.props);
-    const course = {
-      COURSEID : this.props.COURSEID
-    }
-
-    var peopleSJSUID = [];
-
-    getEnrolledPeople(course)
-    .then(res => {
-      Object.keys(res.people).filter(key => res.people[key].course != null).map(x => {
-        // console.log(res.people[x].SJSUID);
-        peopleSJSUID.push(res.people[x].SJSUID);
-      })
-      // res.people.filter(people => people.course != null).map(people => {
-      //     console.log(people);
-      //     peopleSJSUID.push(people.SJSUID);
-      // });
-
-      var peopleData = [];
-
-      peopleSJSUID.map(sjsuid => {
-        // console.log(x);
-        getUser({SJSUID: sjsuid})
-        .then(res => {
-          // console.log(res.user.FNAME);
-          // console.log(res.user)
-          peopleData.push(res.user);
-          this.setState({enrolledPeople: peopleData});
-      // console.log(peopleData)
-        })
-      })
-
-      
-    }) 
-  }
 
   componentWillMount() {
 
-    this.initialRender();
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
+
+    this.setState({
+      isFaculty: decoded.faculty,
+    })
     
+  }  
+
+  delete = (userId) => {
+    axios
+        .post('/api/courses/unenroll', {userId})
+        .then(res => {
+            console.log(res)
+        })
+        .catch(err => {
+            console.log(err)
+        }) 
   }
-
-  delete = (sjsuid) => {
- 
-    console.log(sjsuid);
-    const deleteuser = {
-      SJSUID: sjsuid,
-      COURSEID: this.props.COURSEID,
-    }
-
-    deleteUser(deleteuser)
-    .then(res => {
-      console.log(res);
-      if(res.status) {
-        console.log("res.status " + res.status);
-      } else if (res.error) {
-        console.log("res.error "+ res.error);
-      }         
-    })
-    .catch(err => {
-      console.log(err);
-    })
-
-    this.initialRender();
-
-  }
-  
 
   render() {
     const { classes } = this.props;
+
+    
+    const studentsEnrolled = this.props.selectedCourse.selectedCourse.studentsEnrolled
+    
     return (
       <div>
         {/* {console.log(this.state.enrolledPeople)} */}
@@ -193,25 +122,27 @@ class People extends React.Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <CustomTableCell align="right"></CustomTableCell>
                 <CustomTableCell >Name</CustomTableCell>
-                <CustomTableCell align="center">Section</CustomTableCell>
-                <CustomTableCell align="center">Role</CustomTableCell>
+                <CustomTableCell >Role</CustomTableCell>
+                
+                <CustomTableCell align="center">SJSUID</CustomTableCell>
+                <CustomTableCell align="center">Email</CustomTableCell>
                 <CustomTableCell></CustomTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.enrolledPeople.map(row => (
-                <TableRow className={classes.row} key={row.name}>
-                  {console.log(row)}
-                  <CustomTableCell align="right">
-                  <Avatar alt="Remy Sharp"  className={classes.profileImg} src={row.PROFILEIMG}>MP</Avatar>
-                  </CustomTableCell>
-                  <CustomTableCell>{row.FNAME + ' ' + row.LNAME}</CustomTableCell>
-                  <CustomTableCell align="center">{row.CITY}</CustomTableCell>
-                  <CustomTableCell align="center">{row.EMAIL}</CustomTableCell>
+              {Object.keys(studentsEnrolled).map(key => (
+                <TableRow className={classes.row} key={studentsEnrolled[key].user.fname + " " + studentsEnrolled[key].user.fname}>
+                  {/* {console.log(studentsEnrolled[key])} */}
+                  {/* <CustomTableCell align="right">
+                  <Avatar alt="Remy Sharp"  className={classes.profileImg} src={studentsEnrolled[key].user.file}>MP</Avatar>
+                  </CustomTableCell> */}
+                  <CustomTableCell>{studentsEnrolled[key].user.fname + ' ' + studentsEnrolled[key].user.lname}</CustomTableCell>
+                  <CustomTableCell align="center">{studentsEnrolled[key].user.faculty? "Faculty" : "Student"}</CustomTableCell>
+                  <CustomTableCell align="center">{studentsEnrolled[key].user.sjsuId}</CustomTableCell>
+                  <CustomTableCell align="center">{studentsEnrolled[key].user.email}</CustomTableCell>
                   <CustomTableCell>
-                    {this.state.FLAG ? <button onClick={() => {this.delete(row.SJSUID)}}>Delete</button>: <div></div>}
+                    {this.state.isFaculty ? !studentsEnrolled[key].user.faculty? <button onClick={() => {this.delete(studentsEnrolled[key].user._id)}}>Delete</button>: <div></div> : <div></div>}
                   </CustomTableCell>
                 </TableRow>
               ))}
@@ -228,6 +159,15 @@ class People extends React.Component {
 
 People.propTypes = {
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  nav: PropTypes.object.isRequired,
+  selectedCourse: PropTypes.object.isRequired,
 };
+  
 
-export default withStyles(styles)(People);
+const mapStateToProps = (state) => ({
+  nav : state.nav,
+  selectedCourse : state.selectedCourse
+})
+
+export default connect(mapStateToProps, {  })(withStyles(styles)(withRouter(People)));

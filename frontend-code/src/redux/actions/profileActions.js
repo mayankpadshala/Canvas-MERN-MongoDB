@@ -27,6 +27,11 @@ export const getCurrentProfile = () => dispatch => {
           payload: err.response.data
         })
     })  
+
+    const token = localStorage.jwtToken
+    //Set token to auth header
+    setAuthToken(token);
+
 }
 
 // Create Profile
@@ -47,13 +52,16 @@ export const createProfile = (profileData, history) => dispatch => {
           payload: err.response.data
         })
       );
+
+      const token = localStorage.jwtToken
+      //Set token to auth header
+      setAuthToken(token);
+
   };
 
 // Get enrolled Courses
 export const getEnrolledCourses = () => dispatch => {
-  const token = localStorage.jwtToken
-  //Set token to auth header
-  setAuthToken(token);
+  
   // console.log("getting enrolled courses")
   axios
       .get('/api/courses/getEnrolledCourses/')
@@ -66,7 +74,27 @@ export const getEnrolledCourses = () => dispatch => {
       .catch(err => {
           console.log(err);
       })  
+
+      const token = localStorage.jwtToken
+      //Set token to auth header
+      setAuthToken(token);
 };
+
+//Update Image
+export const updateImage = (fd) => dispatch => {
+  
+  axios
+  .post('/api/files/profileImage', fd)
+  .then(res => {
+      console.log(res.data);
+      getCurrentProfile()
+  })
+  
+  const token = localStorage.jwtToken
+  //Set token to auth header
+  setAuthToken(token);
+} 
+
 //   // Profile loading
 //   export const setProfileLoading = () => {
 //     return {

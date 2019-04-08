@@ -11,10 +11,10 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 import {connect} from 'react-redux';
-
+import axios from 'axios'
 import { withRouter } from 'react-router-dom';
 
-import {getCurrentProfile, createProfile} from '../../../redux/actions/profileActions'
+import {getCurrentProfile, createProfile, updateImage} from '../../../redux/actions/profileActions'
 
 const styles = theme => ({
   root: {
@@ -96,7 +96,7 @@ class Profile extends React.Component {
         fname: decoded.fname,
         lname: decoded.lname,
         email: decoded.email,
-        sjsuId: decoded.sjsuId
+        sjsuId: decoded.sjsuId,
       })
 
       this.props.getCurrentProfile();
@@ -116,6 +116,7 @@ class Profile extends React.Component {
         country: profile.country,
         gender: profile.gender,
         hometown: profile.hometown,
+        avatar: profile.avatar
       })
     }
 
@@ -138,7 +139,19 @@ class Profile extends React.Component {
 
         this.props.createProfile(user, this.props.history)
 
-          this.setState({editButtonState: !this.state.editButtonState});
+        this.setState({editButtonState: !this.state.editButtonState});
+      }
+
+      updateImage = (event) => {
+        const file = event.target.files[0]
+
+        const fd = new FormData();
+        // fd.append("profileImg", this.state.selectedFile, this.state.selectedFile.name);
+
+        fd.append("profileImg", file, file.name);
+      
+        this.props.updateImage(fd);
+
       }
 
   render() {
@@ -377,7 +390,6 @@ class Profile extends React.Component {
             <Grid item xs={2}>
                 <Button variant="outlined" className={classes.button} onClick={() => {this.setState({editButtonState: !this.state.editButtonState})}}>
                     <EditIcon></EditIcon> Edit Profile
-                    {console.log(this.state.profileImgUrl)}
                 </Button>         
             </Grid>
         </Grid>
@@ -395,4 +407,4 @@ const mapStateToProps = (state) => ({
   userProfile : state.userProfile,
 })
 
-export default connect(mapStateToProps, { getCurrentProfile, createProfile })(withStyles(styles)(withRouter(Profile)));
+export default connect(mapStateToProps, { getCurrentProfile, createProfile, updateImage })(withStyles(styles)(withRouter(Profile)));

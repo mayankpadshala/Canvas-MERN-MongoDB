@@ -48,6 +48,32 @@ const CourseSchema = new mongoose.Schema({
             }
         }
     ],
+    assignments: [
+        {
+            assignment: {
+                type: Schema.Types.ObjectId,
+                ref: 'assignments',
+            }
+        }
+    ],
+    announcement: [
+        {
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: 'users',
+            },
+            title: {
+                type: String,
+            },
+            description: {
+                type: String,
+            },
+            date: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
     date: {
         type: Date,
         default: Date.now

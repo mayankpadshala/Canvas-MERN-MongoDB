@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import {Route} from 'react-router-dom';
+import {Route, withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import SideNav from './SideNav'
 
@@ -10,7 +11,12 @@ import CreateMain from './createCourse/CreateMain'
 import RegisterMain from './registerCourse/RegisterMain'
 import CourseMain from './courses/CourseMain'
 
+import {getCurrentProfile} from '../../redux/actions/profileActions'
+
 class Dashboard extends Component {
+  componentWillMount() {
+    this.props.getCurrentProfile()
+  }
   render() {
     return (
       <div>
@@ -51,4 +57,5 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard
+export default connect(null, { getCurrentProfile })(withRouter(Dashboard));
+

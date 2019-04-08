@@ -158,7 +158,7 @@ class SideNav extends Component {
       faculty: decoded.faculty,
       fname: decoded.fname,
       lname: decoded.lname,
-      avatar: decoded.avatar,
+      avatar: this.props.userProfile.profile.avatar
     })
   }
 
@@ -245,7 +245,7 @@ class SideNav extends Component {
                     {/* Account */}
                     <ListItem className={classes.flex_clm} onClick={this.handleAccountDrawerToggle} button >
                         <ListItemIcon className={classes.icon_set1} >
-                            <Avatar alt="Remy Sharp" src={this.state.PROFILEIMG} className={this.props.nav.sideNav? classes.profileImg_open : classes.profileImg} /> 
+                            <Avatar alt="Remy Sharp" src={this.props.userProfile.profile.avatar} className={this.props.nav.sideNav? classes.profileImg_open : classes.profileImg} /> 
                         </ListItemIcon>
                         <span className={classNames(classes.menu_item_name, {[classes.hide]: !this.props.nav.sideNav,})}  > Account</span>
                     </ListItem>
@@ -368,10 +368,12 @@ SideNav.propTypes = {
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
     nav: PropTypes.object.isRequired,
-};
+    userProfile: PropTypes.object.isRequired,
+  };
     
 const mapStateToProps = (state) => ({
   nav : state.nav,
+  userProfile : state.userProfile
 })
 
 export default connect(mapStateToProps, { setNav, openSideNavState, closeSideNavState, changeChildNavAccount, changeChildNavCourse })(withStyles(styles)(withRouter(SideNav)));

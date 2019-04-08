@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import {Route, Switch, Link, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
@@ -10,8 +12,9 @@ import Divider from '@material-ui/core/Divider';
 import jwt_decode from 'jwt-decode';
 import TextField from '@material-ui/core/TextField';
 
-import { getAnnounByCors, getUser, createAnnouncement, delAnnouncement } from '../../UserFunctions'
 import { Paper } from '@material-ui/core';
+
+import {createAnncouncement, deleteAnnouncement} from '../../../../redux/actions/courseActions'
 
 const styles = theme => ({
     root: {
@@ -65,37 +68,17 @@ const styles = theme => ({
 class Announcements extends Component {
 
   state = {
-    SJSUID: '',
-    COURSEID: '',
-    announcements: [],
-    FLAG: false,
-    posting: false,
-    TITLE: '',
-    DESCRIPTION: '',
-  }
-
-  initialRender = () => {
-    const token = localStorage.usertoken;
-    const decoded = jwt_decode(token);
-      // console.log(decoded.SJSUID);
-      this.setState({
-        SJSUID : decoded.SJSUID,
-        COURSEID: this.props.COURSEID,
-        FLAG: decoded.FLAG,
-        posting: false,
-      });
-
-      getAnnounByCors(this.props.COURSEID)
-      .then(res => {
-        // console.log(res.data.announcements);
-        this.setState({announcements: res.data.announcements});
-      })
-
+    posting: false
   }
 
   componentWillMount() {
-    this.initialRender();
-    // console.log(this.state.announcements)
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
+    // console.log(decoded);
+
+    this.setState({
+      isFaculty: decoded.faculty,
+    })
   }
 
   onChange = (e) => {
@@ -106,38 +89,25 @@ class Announcements extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    const announce = {
-      COURSEID : this.state.COURSEID,
-      TITLE : this.state.TITLE,
-      DESCRIPTION : this.state.DESCRIPTION,
-      CREATEDBY : this.state.SJSUID
-    }
-    //  console.log(this.state.TITLE);
-    //  console.log(this.state.DESCRIPTION);
-    createAnnouncement(announce)
-    .then(res => {
-      console.log(res);
-    })
-
-    this.initialRender();
-    
+    this.props.createAnncouncement(this.props.selectedCourse.selectedCourse._id , this.state.title, this.state.description)
+    this.setState({
+      posting: !this.state.posting
+    });
   }
 
-  delete = (id) => {
-    delAnnouncement(id)
-    .then(res => {
-      console.log(res);
-      this.initialRender();
-    })
+  delete = (announcementId) => {
+    this.props.deleteAnnouncement(this.props.selectedCourse.selectedCourse._id, announcementId)
   }
 
   
   render() {
     const { classes } = this.props;
 
+    const announcement = this.props.selectedCourse.selectedCourse.announcement
+
     const displayAnnouncements = (
       <div>
-          {Object.keys(this.state.announcements).map((key, index) => (
+          {Object.keys(announcement).map((key, index) => (
           <div>     
             <Grid
                 container
@@ -157,8 +127,8 @@ class Announcements extends Component {
                 width='100%'
                 className={classes.bgPaper}
                 >
-                    <Typography variant="h6" gutterBottom> {this.state.announcements[key].TITLE} </Typography>
-                    <Typography noWrap className={classes.textHidden} variant="subheading" > {this.state.announcements[key].DESCRIPTION} </Typography>
+                    <Typography variant="h6" gutterBottom> {announcement[key].title} </Typography>
+                    <Typography noWrap className={classes.textHidden} variant="subheading" > {announcement[key].title.description} </Typography>
                 </Grid>
                 
                 <Grid
@@ -169,11 +139,11 @@ class Announcements extends Component {
                 className={classes.bgPaper}
                 >
                     <Typography variant="subtitle1" > Posted On </Typography>
-                    <Typography> {this.state.announcements[key].TIMESTAMP} </Typography>
+                    <Typography> {announcement[key].date} </Typography>
                 </Grid>
 
                 <Grid item xs={1}>
-                  {this.state.FLAG ? <button onClick={() => {this.delete(this.state.announcements[key].ID)}}>Delete</button>: <div></div>}
+                  {this.state.isFaculty ? <button onClick={() => {this.delete(announcement[key]._id)}}>Delete</button>: <div></div>}
                 </Grid>
                 
             </Grid>
@@ -197,7 +167,7 @@ class Announcements extends Component {
               className={classes.textField}
               margin="normal"
               variant="outlined"
-              name="TITLE"
+              name="title"
               onChange={this.onChange}
             />
 
@@ -209,7 +179,7 @@ class Announcements extends Component {
               className={classes.textField}
               margin="normal"
               variant="outlined"
-              name="DESCRIPTION"
+              name="description"
               onChange={this.onChange}
             />
 
@@ -224,8 +194,8 @@ class Announcements extends Component {
     )
 
     return (
-      <div style={{marginTop: '64px'}}>     
-          {this.state.FLAG ? 
+      <div style={{margin: '64px 0 0 120px'}}>     
+          {this.state.isFaculty ? 
             
             <Paper className={classes.header}>
 
@@ -253,14 +223,13 @@ class Announcements extends Component {
           }
 
       <Divider className={classes.divider}/>
-
+        
         {
           this.state.posting ?
-            postingForm
-            :
-            displayAnnouncements
+          postingForm
+          :
+          displayAnnouncements
         }
-      
       </div>
     );
   }
@@ -268,6 +237,16 @@ class Announcements extends Component {
 
 Announcements.propTypes = {
     classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
+    nav: PropTypes.object.isRequired,
+    selectedCourse: PropTypes.object.isRequired,
   };
+    
   
-export default withStyles(styles)(Announcements);
+  const mapStateToProps = (state) => ({
+    nav : state.nav,
+    selectedCourse : state.selectedCourse
+  })
+  
+  export default connect(mapStateToProps, { createAnncouncement, deleteAnnouncement })(withStyles(styles)(withRouter(Announcements)));
+

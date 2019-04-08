@@ -18,10 +18,15 @@ import ListItem from '@material-ui/core/ListItem';
 // import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {connect} from 'react-redux';
+import Button from '@material-ui/core/Button';
 
-import {getCourse} from '../../../redux/actions/courseActions'
+import {getCourse, courseSection} from '../../../redux/actions/courseActions'
 
 import AssignmentMain from './assignments/assignmentsMain'
+import CreateAssignment from './assignments/createAssignment'
+import DisplayAssignment from './assignments/displayAssignments'
+import SubmitAssignment from './assignments/submitAssignment'
+import DisplaySubmissions from './assignments/displaySubmissions'
 import Announcements from './announcements/announcements'
 import Grades from './grades/grades'
 import People from './People/people'
@@ -37,7 +42,7 @@ const styles = theme => ({
   },
   appBar: {
       backgroundColor: '#FFFFFF',
-    transition: theme.transitions.create(['margin', 'width'], {
+      transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -124,21 +129,23 @@ marginTop: '64px',
         color: '#008ee2',
     },
     link: {
+      width: '100%',
       textDecoration: 'none',
+      display: 'block'
     }
 });
 
 class CourseMain extends Component {
 
     state = {
-        open: false,
+        open: true,
         course: {}
     };
 
     componentWillMount() {
       // var url = new URL(window.location.href);
       // var courseid = url.searchParams.get("id");
-      console.log(this.props.selectedCourse.courseClicked);
+      // console.log(this.props.selectedCourse.courseClicked);
       this.props.getCourse(this.props.selectedCourse.courseClicked);
       
     }
@@ -169,11 +176,16 @@ class CourseMain extends Component {
                 {/* {console.log(this.props)} */}
                 <List>
                     {[['Assignments', 'assignments'], ['Announcement', 'announcement'], ['Grades', 'grades'], ['People', 'people'], ['Files', 'files'], ['Quizzes', 'quizzes']].map((text, index) => (
-                        <Link to={text[1]} className={classes.link} key={text[0]}>
-                          <ListItem button key={text[0]}>
-                              <ListItemText primary={text[0]} key={text[0]}/>
-                          </ListItem>
-                        </Link>
+                        // <Link to={text[1]} className={classes.link} key={text[0]}>
+                        //   <ListItem button key={text[0]}>
+                        //       <ListItemText primary={text[0]} key={text[0]}/>
+                        //   </ListItem>
+                        // </Link>
+                        <Button className={classes.link} onClick={() => {this.props.courseSection(text[1], this.props.history)}}>
+                        <ListItem button key={text[0]}>
+                               <ListItemText primary={text[0]} key={text[0]}/>
+                        </ListItem>
+                        </Button>
                     ))}
                 
                     {
@@ -198,6 +210,29 @@ class CourseMain extends Component {
                              render={()=> {
                               return <AssignmentMain />
                              }}
+                    />
+                    <Route path='/dashboard/courses/createAssignment' 
+                            render={()=> {
+                            return <CreateAssignment/>
+                            }}
+                    />
+                    
+                    <Route path='/dashboard/courses/viewAssignments' 
+                            render={()=> {
+                            return <DisplayAssignment/>
+                            }}
+                    />
+                    
+                    <Route path='/dashboard/courses/submitAssignments' 
+                            render={()=> {
+                            return <SubmitAssignment/>
+                            }}
+                    />
+
+                    <Route path='/dashboard/courses/displaySubmissions' 
+                            render={()=> {
+                            return <DisplaySubmissions/>
+                            }}
                     />
 
                     <Route  path='/dashboard/courses/announcement' 
@@ -357,4 +392,4 @@ class CourseMain extends Component {
     })
 
     
-export default connect(mapStateToProps, { getCourse })(withStyles(styles)(withRouter(CourseMain)));
+export default connect(mapStateToProps, { getCourse, courseSection })(withStyles(styles)(withRouter(CourseMain)));

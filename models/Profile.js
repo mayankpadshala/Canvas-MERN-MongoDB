@@ -8,6 +8,9 @@ const ProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'users',
     },
+    avatar: {
+        type: String,
+    },
     handle: {
         type: String,
         max: 40,
@@ -51,6 +54,10 @@ const ProfileSchema = new Schema({
     ],
     submission: [
         {
+            assignment: {
+                type: Schema.Types.ObjectId,
+                ref: 'assignments',
+            },
             file: {
                 type: String,
             },

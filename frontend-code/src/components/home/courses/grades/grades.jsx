@@ -12,9 +12,10 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Divider from '@material-ui/core/Divider';
 import jwt_decode from 'jwt-decode';
+import {Route, Switch, Link, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
-import {uploadAssignment, getAssignByCourse, delAssignment, uploadSubmission} from '../../UserFunctions'
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -30,8 +31,8 @@ const CustomTableCell = withStyles(theme => ({
 const styles = theme => ({
   root: {
     boxShadow: 'none',
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 6,
+    marginLeft: '64px'
     // overflowX: 'auto',
   },
   table: {
@@ -67,159 +68,219 @@ const styles = theme => ({
 
 class Grades extends React.Component {
   
-
-  state = {
-    SJSUID: '',
-    COURSEID: '',
-    assignments: [],
-  }
-
-  initialRender() {
-    const token = localStorage.usertoken;
-    const decoded = jwt_decode(token);
-
-    this.setState({
-      SJSUID: decoded.SJSUID,
-      COURSEID: this.props.COURSEID,
-    })
-
-    getAssignByCourse(this.props.COURSEID)
-    .then(res => {
-      // console.log(res);
-      this.setState({assignments: res});
-    })
+  state={
 
   }
 
   componentWillMount(){
-    this.initialRender();
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
+
+    this.setState({
+      isFaculty: decoded.faculty,
+    })
   }
 
   render() {
     const { classes } = this.props;
+    // const assignmens = []
+    const assignmens = this.props.selectedCourse.selectedCourse.assignments
+    // console.log(assignmenstts)
+    
+    const studentsEnrolled = this.props.selectedCourse.selectedCourse.studentsEnrolled
+    // console.log(assignmenstts)
+
+    const studentGrades = (
+      
+      <Paper className={classes.root}>
+      {console.log(this.state)}
+      <div>
+        <h1>Grades For Mayank Padshala</h1>
+      </div>
+
+      <div style={{display: 'flex'}}>
+        <div>
+          <h4 style={{marginLeft: '24px'}}>Course</h4>
+          <Paper className={classes.searchBar} elevation={1}>
+            <InputBase className={classes.input} placeholder="Search" />
+            <IconButton className={classes.iconButton} aria-label="Search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </div>
+        <div>
+          <h4 style={{marginLeft: '24px'}}>Due Date</h4>
+          <Paper className={classes.searchBar} elevation={1}>
+            <InputBase className={classes.input} placeholder="Search" />
+            <IconButton className={classes.iconButton} aria-label="Search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </div>
+      </div>
+
+      <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+          // alignItems="center"
+          item xs={9}
+      >
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <CustomTableCell>Name</CustomTableCell>
+                    <CustomTableCell align="right">Due</CustomTableCell>
+                    <CustomTableCell align="right">Score</CustomTableCell>
+                    <CustomTableCell align="right">Out Of</CustomTableCell>
+                    <CustomTableCell align="right"></CustomTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(assignmens).map(key => (
+                    <TableRow className={classes.row} key={assignmens[key].assignment._id}>
+                      <CustomTableCell component="th" scope="row">
+                        {assignmens[key].assignment.title}
+                      </CustomTableCell>
+                      <CustomTableCell align="right">{assignmens[key].assignment.dueDate}</CustomTableCell>
+                      <CustomTableCell align="right">{}</CustomTableCell>
+                      <CustomTableCell align="right">{assignmens[key].assignment.totalPoints}</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                  ))}
+                 
+                    <TableRow className={classes.row} >
+                      <CustomTableCell component="th" scope="row">
+                        Quiz 1
+                      </CustomTableCell>
+                      <CustomTableCell align="right">2019-03-12</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                    <TableRow className={classes.row} >
+                      <CustomTableCell component="th" scope="row">
+                      <strong>Total</strong>
+                      </CustomTableCell>
+                      <CustomTableCell align="right">-</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right">75</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                </TableBody>
+              </Table>
+        </Grid>
+    </Paper>
+
+    )
+
+    const facultyGrades = (
+      
+      <Paper className={classes.root}>
+      {console.log(this.state)}
+      <div>
+        <h1>Grades For Mayank Padshala</h1>
+      </div>
+
+      <div style={{display: 'flex'}}>
+        <div>
+          <h4 style={{marginLeft: '24px'}}>Course</h4>
+          <Paper className={classes.searchBar} elevation={1}>
+            <InputBase className={classes.input} placeholder="Search" />
+            <IconButton className={classes.iconButton} aria-label="Search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </div>
+        <div>
+          <h4 style={{marginLeft: '24px'}}>Due Date</h4>
+          <Paper className={classes.searchBar} elevation={1}>
+            <InputBase className={classes.input} placeholder="Search" />
+            <IconButton className={classes.iconButton} aria-label="Search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </div>
+      </div>
+
+      <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+          // alignItems="center"
+          item xs={9}
+      >
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <CustomTableCell>Name</CustomTableCell>
+                    <CustomTableCell align="right">Due</CustomTableCell>
+                    <CustomTableCell align="right">Score</CustomTableCell>
+                    <CustomTableCell align="right">Out Of</CustomTableCell>
+                    <CustomTableCell align="right"></CustomTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(studentsEnrolled).filter(key => !studentsEnrolled[key].user.faculty).map(key => (
+                    <TableRow className={classes.row} key={studentsEnrolled[key].user._id}>
+                      <CustomTableCell component="th" scope="row">
+                        {studentsEnrolled[key].user.fname + " " + studentsEnrolled[key].user.fname}
+                      </CustomTableCell>
+                      <CustomTableCell align="right">{studentsEnrolled[key].user.dueDate}</CustomTableCell>
+                      <CustomTableCell align="right">{}</CustomTableCell>
+                      <CustomTableCell align="right">{studentsEnrolled[key].user.totalPoints}</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                  ))}
+                 
+                    <TableRow className={classes.row} >
+                      <CustomTableCell component="th" scope="row">
+                        Quiz 1
+                      </CustomTableCell>
+                      <CustomTableCell align="right">2019-03-12</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                    <TableRow className={classes.row} >
+                      <CustomTableCell component="th" scope="row">
+                      <strong>Total</strong>
+                      </CustomTableCell>
+                      <CustomTableCell align="right">-</CustomTableCell>
+                      <CustomTableCell align="right">5</CustomTableCell>
+                      <CustomTableCell align="right">75</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                </TableBody>
+              </Table>
+        </Grid>
+    </Paper>
+
+    )
 
     return (
-          <Paper className={classes.root}>
-          {console.log(this.state)}
-          <div>
-            <h1>Grades For Mayank Padshala</h1>
-          </div>
-
-          <div style={{display: 'flex'}}>
-            <div>
-              <h4 style={{marginLeft: '24px'}}>Course</h4>
-              <Paper className={classes.searchBar} elevation={1}>
-                <InputBase className={classes.input} placeholder="Search" />
-                <IconButton className={classes.iconButton} aria-label="Search">
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
-            </div>
-            <div>
-              <h4 style={{marginLeft: '24px'}}>Due Date</h4>
-              <Paper className={classes.searchBar} elevation={1}>
-                <InputBase className={classes.input} placeholder="Search" />
-                <IconButton className={classes.iconButton} aria-label="Search">
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
-            </div>
-          </div>
-
-          <Grid
-              container
-              direction="row"
-              justify="space-evenly"
-              // alignItems="center"
-              item xs={9}
-          >
-                  <Table className={classes.table}>
-                    <TableHead>
-                      <TableRow>
-                        <CustomTableCell>Name</CustomTableCell>
-                        <CustomTableCell align="right">Due</CustomTableCell>
-                        <CustomTableCell align="right">Score</CustomTableCell>
-                        <CustomTableCell align="right">Out Of</CustomTableCell>
-                        <CustomTableCell align="right"></CustomTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {Object.keys(this.state.assignments).map(key => (
-                        <TableRow className={classes.row} key={this.state.assignments[key].ID}>
-                          <CustomTableCell component="th" scope="row">
-                            {this.state.assignments[key].NAME}
-                          </CustomTableCell>
-                          <CustomTableCell align="right">{this.state.assignments[key].DUEDATE}</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                          <CustomTableCell align="right">{this.state.assignments[key].TOTALPOINTS}</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                      ))}
-                      {/* <TableRow className={classes.row} >
-                          <CustomTableCell component="th" scope="row">
-                            <strong>Assignments</strong>
-                          </CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                          <CustomTableCell align="right">100%</CustomTableCell>
-                          <CustomTableCell align="right">30/40</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                        <TableRow className={classes.row} >
-                          <CustomTableCell component="th" scope="row">
-                          <strong>Lab</strong>
-                          </CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                          <CustomTableCell align="right">N/A</CustomTableCell>
-                          <CustomTableCell align="right">N/A</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                        <TableRow className={classes.row} >
-                          <CustomTableCell component="th" scope="row">
-                            <strong>Group Project</strong>
-                          </CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                          <CustomTableCell align="right">100%</CustomTableCell>
-                          <CustomTableCell align="right">30/40</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                        <TableRow className={classes.row} >
-                          <Divider className={classes.divider} />
-                          <Divider className={classes.divider} />
-                          <Divider className={classes.divider} />
-                          <Divider className={classes.divider} />
-                          <Divider className={classes.divider} />
-                          <Divider className={classes.divider} />
-                        </TableRow> */}
-                        <TableRow className={classes.row} >
-                          <CustomTableCell component="th" scope="row">
-                            Quiz 1
-                          </CustomTableCell>
-                          <CustomTableCell align="right">2019-03-12</CustomTableCell>
-                          <CustomTableCell align="right">5</CustomTableCell>
-                          <CustomTableCell align="right">5</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                        <TableRow className={classes.row} >
-                          <CustomTableCell component="th" scope="row">
-                          <strong>Total</strong>
-                          </CustomTableCell>
-                          <CustomTableCell align="right">-</CustomTableCell>
-                          <CustomTableCell align="right">5</CustomTableCell>
-                          <CustomTableCell align="right">75</CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                          <CustomTableCell align="right"></CustomTableCell>
-                        </TableRow>
-                    </TableBody>
-                  </Table>
-            </Grid>
-        </Paper>
-
+      <div>
+        
+      {!this.state.isFaculty? studentGrades : <div className={classes.root}><h1>Yet to develop</h1></div>}
+      </div>
     );
   }
 }
 
 Grades.propTypes = {
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  nav: PropTypes.object.isRequired,
+  selectedCourse: PropTypes.object.isRequired,
 };
+  
 
-export default withStyles(styles)(Grades);
+const mapStateToProps = (state) => ({
+  nav : state.nav,
+  selectedCourse : state.selectedCourse
+})
+
+export default connect(mapStateToProps, {  })(withStyles(styles)(withRouter(Grades)));
+

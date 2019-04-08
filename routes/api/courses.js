@@ -11,6 +11,9 @@ const User = require('../../models/User');
 //Load Profiles Model
 const Course = require('../../models/Course');
 
+//Load Assignment Model
+const Assignment = require('../../models/Assignments');
+
 //Import Validator Fields
 const validateProfileInput = require('../../validation/profile');
 
@@ -98,13 +101,15 @@ router.post('/', passport.authenticate('jwt', {session: false}),(req, res) => {
 })
 
 //@route POST api/courses/getCourse/
-//@desc Enroll a course
+//@desc Get Course Details
 //@access Private
 router.post('/getCourse', passport.authenticate('jwt', {session: false}),(req, res) => {
     
     console.log(req.body.id)
 
     Course.findById(req.body.id)
+    .populate('assignments.assignment')
+    .populate('studentsEnrolled.user')
     .then(course => {
         res.json(course);
     })
@@ -343,5 +348,112 @@ router.post('/getBycourseName',passport.authenticate('jwt', {session: false}),(r
 
 
 })
+
+//@route POST api/courses/displayAssignment
+//@desc Send assignment data
+//@access Private
+router.post('/displayAssignment',passport.authenticate('jwt', {session: false}),(req, res) => {
+    
+    Assignment.findById(req.body.id)
+    .populate('submission.submitedBy')
+    .then(assign => {
+        res.json(assign)
+    })
+
+})
+
+//@route POST api/courses/deleteAssignment
+//@desc Send assignment data
+//@access Private
+router.post('/deleteAssignment',passport.authenticate('jwt', {session: false}),(req, res) => {
+    
+    Assignment.remove({ _id: req.body.id })
+    .then(assign => {
+        Course.findById(req.body.courseId)
+        .then(course => {
+            // Get remove index
+            const removeIndex = course.assignments
+            .map(item => item.assignment.toString())
+            .indexOf(req.body.id);
+
+            // Splice out of array
+            course.assignments.splice(removeIndex, 1);
+
+            // Save
+            course.save().then(course => {        
+                console.log('Course updated with removed assignment')
+                console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                console.log(course)
+                res.json(course)
+            });
+        })
+    })
+
+})
+
+//@route POST api/courses/updateMarks
+//@desc Send assignment data
+//@access Private
+router.post('/updateMarks',passport.authenticate('jwt', {session: false}),(req, res) => {
+    console.log(req.body)
+    Assignment.findById(req.body.assignId)
+    .then(assign => {
+        let submission = assign.submission.filter(submission => submission.submissoinNumber === req.body.submissionNumber)
+        console.log(submission);
+        Object.keys(submission).map(key => {
+            assign.submission[key].marks = req.body.marks
+        })
+
+        assign.save()
+        .then(asin => {
+            console.log(asin)
+            res.json(asin);
+        })
+    })
+    .catch(err => {
+        console.log(err)
+    })
+
+})
+
+router.post('/createAnnouncement',passport.authenticate('jwt', {session: false}),(req, res) => {
+    console.log(req.body)
+    Course.findById(req.body.courseId)
+    .then(course => {
+        course.announcement.unshift({
+            user: req.user.id,
+            title : req.body.title,
+            description: req.body.description
+        });
+        course.save()
+        .then(crs => {
+            res.json(crs)
+        })
+        .catch(err => {console.log(err)})
+    })
+    .catch(err => {console.log(err)})
+})
+
+router.post('/deleteAnnouncement',passport.authenticate('jwt', {session: false}),(req, res) => {
+    console.log(req.body)
+    Course.findById(req.body.courseId)
+    .then(course => {
+        const removeIndex = course.announcement
+        .map(item => item._id.toString())
+        .indexOf(req.body.assignId);
+
+        console.log(removeIndex)
+        // Splice out of array
+        course.announcement.splice(removeIndex, 1);
+
+        course.save()
+        .then(corse => {
+            console.log(corse);
+            res.json(corse)
+        })
+    })
+    .catch(err => {console.log(err)})
+})
+
 
 module.exports = router;
