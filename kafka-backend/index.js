@@ -1,18 +1,22 @@
 var connection =  new require('./kafka/Connection');
+const mongoose = require('mongoose');
+
+//DB Config
+// const db = "mongodb+srv://root:9712412002@canvas-ipu73.mongodb.net/test?retryWrites=true";
+
+const db = require('./config/keys').mongoURI
+
+mongoose.Promise = global.Promise;
+
+//Connect to Mongo Db
+mongoose.connect(db, { useNewUrlParser: true })
+    .then(() => console.log('Mongo Db Connected in Kafka'))
+    .catch((err) => console.log(err))
+
 //topics files
 //var signin = require('./services/signin.js');
 var Users = require('./services/users.js');
 
-const mongoose = require('mongoose');
-
-//DB Config
-const db = require('./config/keys').mongoURI;
-
-
-//Connect to Mongo Db
-mongoose.connect(db, { useNewUrlParser: true })
-    .then(() => console.log('Mongo Db Connected'))
-    .catch((err) => console.log(err))
 
 
 function handleTopicRequest(topic_name,fname){
@@ -47,4 +51,5 @@ function handleTopicRequest(topic_name,fname){
 // Add your TOPICs here
 //first argument is topic name
 //second argument is a function that will handle this topic request
-handleTopicRequest("user",Users)
+
+handleTopicRequest("users",Users)
