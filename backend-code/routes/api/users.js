@@ -140,20 +140,18 @@ router.post('/login', (req, res) => {
 
     // })
 
-    kafka.make_request('user',req.body, function(err,results){
+    kafka.make_request('users',req.body, function(err,results){
         console.log('in result');
         console.log(results);
         if (err){
             console.log("Inside err");
             res.json({
-                status:"error",
+                status:"400",
                 msg:"System Error, Try Again."
             })
         }else{
             console.log("Inside else");
-                res.json({
-                    updatedList:results
-                });
+                res.json(results);
 
                 res.end();
             }
