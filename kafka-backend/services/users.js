@@ -2,18 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-//in order to use req.body we need to get body-parser
-const bodyParser = require('body-parser');
-
-
-const mongoose = require('mongoose');
-
-router.use(bodyParser.json())
-router.use(bodyParser.urlencoded({extended: true}))
-
+var cors = require('cors');
+router.use(cors());
 
 //Load User Model
-const User = require('../models/User');
+const User = require('../../models/User');
 
 //Importing gravatar for user registration
 const gravatar = require('gravatar');
@@ -25,7 +18,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 
 //Import keys for jwt token secret key
-const secretOrKey = require('../config/keys').secretOrKey;
+const secretOrKey = require('../../config/keys').secretOrKey;
 
 //Create a protected route using passport
 const passport = require('passport');
@@ -103,62 +96,49 @@ router.post('/register', (req, res) => {
 //@route GET api/users/login
 //@desc Login a User /Retunr token (jwt)
 //@access Public
-function handle_request(msg, callback){
+function handle_request(msg, callback) {
+    const {errors, isValid} = validateLoginInput(req.body);
 
-    const {errors, isValid} = validateLoginInput(msg);
-
-    var res = {};
-    console.log("In handle request:"+ JSON.stringify(msg));
-
-            // Check Validation
-            if(!isValid) {
-                console.log("In is Valid")
-                callback(null, errors);
-            }
-
-            const sjsuId = msg.sjsuId;
-            const password = msg.password;
-            
-            // console.log(sjsuId)
-
-            //Find user by email
-            User.findOne({sjsuId : msg.sjsuId})
-            .then(user => {
-                console.log(user)
-                if(!user) {
-                    errors.sjsuId = "User not found";
-                    callback(null, errors);
-                }
-
-                //Check Password
-                bcrypt.compare(password, user.password).then(isMatch => {
-                    if(isMatch){
-                        // res.json({msg: "Success"})
-                        //User matched
-
-                        const payload = { id : user.id, fname: user.fname, lname: user.lname,email: user.email, sjsuId: user.sjsuId, avatar: user.avatar, faculty: user.faculty } //Create jwt payload to send with jwt token
-
-                        //Sign token take in two parameters first is the payload that we created above and the secret key
-                        jwt.sign(payload, secretOrKey, {expiresIn: 8*3600}, (err, token) => {
-
-                            data = {
-                                success: true,
-                                token: "Bearer " + token
-                              };
-
-                            callback(null, data );
-                        });
-
-                    } else {
-                        callback(null,err );
-                    }
-                })
-
-            })
-            .catch(err => {
-                console.log(err);
-            })
+    // Check Validation
+    if(!isValid) {
+        return res.status(400).json(errors);
     }
+
+    const sjsuId = req.body.sjsuId;
+    const password = req.body.password;
+
+    //Find user by email
+    User.findOne({sjsuId}).then(user => {
+        if(!user) {
+            errors.sjsuId = "User not found";
+            return res.status(404).json(errors);
+        }
+
+        //Check Password
+        bcrypt.compare(password, user.password).then(isMatch => {
+            if(isMatch){
+                // res.json({msg: "Success"})
+                //User matched
+
+                const payload = { id : user.id, fname: user.fname, lname: user.lname,email: user.email, sjsuId: user.sjsuId, avatar: user.avatar, faculty: user.faculty } //Create jwt payload to send with jwt token
+
+                //Sign token take in two parameters first is the payload that we created above and the secret key
+                jwt.sign(payload, secretOrKey, {expiresIn: 8*3600}, (err, token) => {
+                    callback(null,{
+                        success: true,
+                        token: 'Bearer ' + token,
+                    });
+                });
+
+            } else {
+                errors.password = "Password Incorrect";
+                callback(null,errors);
+            }
+        })
+
+    })
+
+}
 
 //@route GET api/users/current
 //@desc Return current user
