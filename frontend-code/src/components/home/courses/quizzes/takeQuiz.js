@@ -8,7 +8,7 @@ import {Route, Switch, Link, withRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import { bindActionCreators } from 'redux';
-import {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex} from '../../../../redux/actions/quizAction';
+import {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex, submitMarks} from '../../../../redux/actions/quizAction';
 
 import {courseSection} from '../../../../redux/actions/courseActions'
 
@@ -123,7 +123,7 @@ class TakeQuiz extends React.Component {
     
     console.log(quizIndex)
     this.setState({
-      userId: decoded._id,
+      userId: decoded.id,
       is_student: decoded.faculty,
       displayingQuiz : propsData[quizIndex].quiz,
       questionsList : propsData[quizIndex].quiz.questions,
@@ -158,9 +158,10 @@ class TakeQuiz extends React.Component {
 submitQuiz = (e) => {
   e.preventDefault();
   // console.log("Hello");
-  console.log(this.state.answerList);
+  // console.log(this.state.answerList);
 
   let count = 0;
+  let totalMarks = this.state.answerList.length*2
   for(let i = 0; i<this.state.answerList.length; i++)
   {
     if(this.state.answerList[i] === this.state.questionsList[i].answer)
@@ -168,12 +169,21 @@ submitQuiz = (e) => {
       count = count + 1;
     }
   }
+  let marksObtained = count*2
+  
+  const quizMarks = {
+    userId : this.state.userId,
+    name: "Quiz " + this.state.displayingQuiz.quizId,
+    marksObtained : marksObtained,
+    totalMarks : totalMarks
+  }
+
+  this.props.submitMarks(quizMarks)
+
   this.setState({
     quizScore : count*2,
-    message: "Your Score is " + count*2 + " out of 10",
+    message: "Your Score is " + count*2 + " out of " + totalMarks,
   })
-
-  
 
 }
 
@@ -233,7 +243,7 @@ submitQuiz = (e) => {
                       label={this.state.questionsList[text].option2} />
                       <FormControlLabel value={this.state.questionsList[text].option3} 
                         control={<Radio color="primary" />} 
-                        label={this.state.questionsList[text].option4} />
+                        label={this.state.questionsList[text].option3} />
                       <FormControlLabel value={this.state.questionsList[text].option4} 
                         control={<Radio color="primary" />} 
                         label={this.state.questionsList[text].option4} />
@@ -293,4 +303,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex, courseSection})(withStyles(styles, { withTheme: true })(withRouter(TakeQuiz)));
+export default connect(mapStateToProps, {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex, courseSection, submitMarks})(withStyles(styles, { withTheme: true })(withRouter(TakeQuiz)));

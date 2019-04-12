@@ -17,6 +17,8 @@ import {connect} from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
 
+import {setGrades} from "../../../../redux/actions/courseActions.js";
+
 const CustomTableCell = withStyles(theme => ({
   head: {
     fontWeight: 'bold',
@@ -32,10 +34,11 @@ const styles = theme => ({
   root: {
     boxShadow: 'none',
     marginTop: theme.spacing.unit * 6,
-    marginLeft: '64px'
+    marginLeft: 64,
     // overflowX: 'auto',
   },
   table: {
+    marginLeft: 64,
     minWidth: 700,
   },
   row: {
@@ -79,6 +82,8 @@ class Grades extends React.Component {
     this.setState({
       isFaculty: decoded.faculty,
     })
+
+    this.props.setGrades();
   }
 
   render() {
@@ -89,6 +94,8 @@ class Grades extends React.Component {
     
     const studentsEnrolled = this.props.selectedCourse.selectedCourse.studentsEnrolled
     // console.log(assignmenstts)
+
+    const userGrades = this.props.selectedCourse.grades
 
     const studentGrades = (
       
@@ -130,7 +137,7 @@ class Grades extends React.Component {
                 <TableHead>
                   <TableRow>
                     <CustomTableCell>Name</CustomTableCell>
-                    <CustomTableCell align="right">Due</CustomTableCell>
+                    <CustomTableCell align="right"></CustomTableCell>
                     <CustomTableCell align="right">Score</CustomTableCell>
                     <CustomTableCell align="right">Out Of</CustomTableCell>
                     <CustomTableCell align="right"></CustomTableCell>
@@ -142,14 +149,26 @@ class Grades extends React.Component {
                       <CustomTableCell component="th" scope="row">
                         {assignmens[key].assignment.title}
                       </CustomTableCell>
-                      <CustomTableCell align="right">{assignmens[key].assignment.dueDate}</CustomTableCell>
+                      {/* <CustomTableCell align="right">{assignmens[key].assignment.dueDate}</CustomTableCell> */}
+                      <CustomTableCell align="right">{}</CustomTableCell>
                       <CustomTableCell align="right">{}</CustomTableCell>
                       <CustomTableCell align="right">{assignmens[key].assignment.totalPoints}</CustomTableCell>
                       <CustomTableCell align="right"></CustomTableCell>
                     </TableRow>
                   ))}
+                  {Object.keys(userGrades).map(key => (
+                    <TableRow className={classes.row} key={userGrades[key]._id}>
+                      <CustomTableCell component="th" scope="row">
+                        {userGrades[key].name}
+                      </CustomTableCell>
+                      <CustomTableCell align="right">{}</CustomTableCell>
+                      <CustomTableCell align="right">{userGrades[key].marksObtained}</CustomTableCell>
+                      <CustomTableCell align="right">{userGrades[key].totalMarks}</CustomTableCell>
+                      <CustomTableCell align="right"></CustomTableCell>
+                    </TableRow>
+                  ))}
                  
-                    <TableRow className={classes.row} >
+                    {/* <TableRow className={classes.row} >
                       <CustomTableCell component="th" scope="row">
                         Quiz 1
                       </CustomTableCell>
@@ -167,7 +186,7 @@ class Grades extends React.Component {
                       <CustomTableCell align="right">75</CustomTableCell>
                       <CustomTableCell align="right"></CustomTableCell>
                       <CustomTableCell align="right"></CustomTableCell>
-                    </TableRow>
+                    </TableRow> */}
                 </TableBody>
               </Table>
         </Grid>
@@ -282,5 +301,5 @@ const mapStateToProps = (state) => ({
   selectedCourse : state.selectedCourse
 })
 
-export default connect(mapStateToProps, {  })(withStyles(styles)(withRouter(Grades)));
+export default connect(mapStateToProps, { setGrades })(withStyles(styles)(withRouter(Grades)));
 

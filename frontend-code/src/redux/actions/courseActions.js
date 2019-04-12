@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {GET_ERRORS, SET_SELECTED_COURSE, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT,GET_USER_PROFILE} from './types';
+import {GET_ERRORS, SET_SELECTED_COURSE, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT,GET_USER_PROFILE, SET_USER_GRADES} from './types';
 import setAuthToken from '../../utils/setAuthToken'
 
 //Register User
@@ -212,6 +212,25 @@ export const deleteAnnouncement = (courseId, announcementId) => dispatch => {
     .then(res => {
         dispatch({
             type: SET_SELECTED_COURSE,
+            payload: res.data
+        })
+    })
+    .catch(err => {
+        console.log(err)
+    })
+
+    const token = localStorage.jwtToken
+    //Set token to auth header
+    setAuthToken(token);
+}
+
+export const setGrades = () => dispatch => {
+    axios
+    .get('/api/users/getGrades')
+    .then(res => {
+        // console.log(res);
+        dispatch({
+            type: SET_USER_GRADES,
             payload: res.data
         })
     })

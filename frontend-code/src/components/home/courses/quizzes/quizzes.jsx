@@ -68,6 +68,7 @@ bgPaper: {
   },
   paperClass:{
     marginTop: 20,
+    marginLeft: 72,
     overflowX: "auto",
     padding: '0% 5% 5%'
   },
@@ -110,7 +111,7 @@ TabContainer.propTypes = {
 class Quizzes extends React.Component {
   state = {
     value: 0,
-    open: true,
+    open: false,
     is_student: true,
     sjsuID: '',
     courseId: '',
@@ -622,90 +623,90 @@ class Quizzes extends React.Component {
             
         </Paper>
 
-            <Paper className={classes.paperClass}>
-        <List
-        component="nav"
-        // subheader={<ListSubheader component="div">Nested List Items</ListSubheader>}
-        className={classes.root1}
-        >
-          <ListItem button onClick={this.handleClick}>
-            {/* <ListItemText inset primary="Course Quizzes" /> */}
-            {this.state.open ? <ExpandLess /> : <ExpandMore />}
-            <Typography variant="h6" gutterBottom> 
-              <strong>Course Quizzes</strong>
-            </Typography>
+        <Paper className={classes.paperClass}>
+          <List
+          component="nav"
+          // subheader={<ListSubheader component="div">Nested List Items</ListSubheader>}
+          className={classes.root1}
+          >
+            <ListItem button onClick={this.handleClick}>
+              {/* <ListItemText inset primary="Course Quizzes" /> */}
+              {this.state.open ? <ExpandLess /> : <ExpandMore />}
+              <Typography variant="h6" gutterBottom> 
+                <strong>Course Quizzes</strong>
+              </Typography>
+              
+            </ListItem>
+            <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.listItemText}>
+                  
+                      {/* {[['Quiz1', 'Due date', 'Time', 'points'], ['Quiz2', 'Due date', 'Time', 'points'], ['Quiz3', 'Due date', 'Time', 'points'], ['Quiz4', 'Due date', 'Time', 'points'] ].map((text, index) => ( */}
+                        {Object.keys(quizzes).map((text, index) => (
+                          <div>
+                          <Grid
+                              container
+                              direction="row"
+                              justify="center"
+                              alignItems="center"
+                              className={classes.bgPaper}
+                          >
+                              <Grid item xs={1}>
+                                  <AssignmentIcon className={classes.icon} />
+                              </Grid>
+                              <Grid item xs={8}>
+                                  <Grid
+                                      container
+                                      direction="column"
+                                      justify="flex-start"
+                                      alignItems="flex-start"
+                                  >
+                                      <Typography variant="h6" gutterBottom>
+                                          <strong>{quizzes[text].quiz.quizId}</strong>
+                                      </Typography>
+                                      <Typography variant="body1" gutterBottom>
+                                          {/* <strong>Available until</strong> {text[1]} |&nbsp; */}
+                                          <strong>Due Date</strong> {quizzes[text].quiz.dueDate} |&nbsp;
+                                          <strong>{quizzes[text].quiz.totalPoints}</strong> pts
+                                      </Typography>
+
+                                  </Grid>
+
+                              </Grid>
+                              <Grid item xs={3}>
+                                  <Grid
+                                      container
+                                      direction="column"
+                                      justify="flex-start"
+                                      alignItems="flex-start"
+                                  >
+                                  { !this.state.is_student ?
+                                      <Button 
+                                      type="submit" variant="contained" color="primary" className={classes.button}
+                                      // style={{display : this.state.is_student == "true" ? 'block' : 'none'}}
+                                      onClick={(e) => this.showQuiz(e, text)}>
+                                        Take Quiz
+                                      </Button>
+                                      :
+                                      <Button 
+                                      type="submit" variant="contained" color="primary" className={classes.button}
+                                      // style={{display : this.state.is_student === "false" ? 'block' : 'none'}}
+                                      onClick={(e) => this.showQuiz(e, text)}>
+                                        View Quiz
+                                      </Button>
+                                  }
+                                  </Grid>
+
+                              </Grid>
+                          </Grid>
+                          
+                          
+                          </div>
+                          
+                      ))}
+
+            </Collapse>
             
-          </ListItem>
-          <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.listItemText}>
-                
-                    {/* {[['Quiz1', 'Due date', 'Time', 'points'], ['Quiz2', 'Due date', 'Time', 'points'], ['Quiz3', 'Due date', 'Time', 'points'], ['Quiz4', 'Due date', 'Time', 'points'] ].map((text, index) => ( */}
-                      {Object.keys(quizzes).map((text, index) => (
-                        <div>
-                        <Grid
-                            container
-                            direction="row"
-                            justify="center"
-                            alignItems="center"
-                            className={classes.bgPaper}
-                        >
-                            <Grid item xs={1}>
-                                <AssignmentIcon className={classes.icon} />
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Grid
-                                    container
-                                    direction="column"
-                                    justify="flex-start"
-                                    alignItems="flex-start"
-                                >
-                                    <Typography variant="h6" gutterBottom>
-                                        <strong>{quizzes[text].quiz.quizId}</strong>
-                                    </Typography>
-                                    <Typography variant="body1" gutterBottom>
-                                        {/* <strong>Available until</strong> {text[1]} |&nbsp; */}
-                                        <strong>Due Date</strong> {quizzes[text].quiz.dueDate} |&nbsp;
-                                        <strong>{quizzes[text].quiz.totalPoints}</strong> pts
-                                    </Typography>
-
-                                </Grid>
-
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Grid
-                                    container
-                                    direction="column"
-                                    justify="flex-start"
-                                    alignItems="flex-start"
-                                >
-                                { !this.state.is_student ?
-                                    <Button 
-                                    type="submit" variant="contained" color="primary" className={classes.button}
-                                    // style={{display : this.state.is_student == "true" ? 'block' : 'none'}}
-                                    onClick={(e) => this.showQuiz(e, text)}>
-                                      Take Quiz
-                                    </Button>
-                                    :
-                                    <Button 
-                                    type="submit" variant="contained" color="primary" className={classes.button}
-                                    // style={{display : this.state.is_student === "false" ? 'block' : 'none'}}
-                                    onClick={(e) => this.showQuiz(e, text)}>
-                                      View Quiz
-                                    </Button>
-                                }
-                                </Grid>
-
-                            </Grid>
-                        </Grid>
-                        
-                        
-                        </div>
-                        
-                    ))}
-
-          </Collapse>
-          
-          </List>
-          </Paper>
+            </List>
+        </Paper>
       </div>
     );
   }

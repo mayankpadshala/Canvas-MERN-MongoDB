@@ -176,4 +176,40 @@ router.get('/current', passport.authenticate('jwt', {session: false}), (req, res
 });
 
 
+//@route GET api/users/updateMarks
+//@desc Return current user
+//@access Private
+router.post('/updateMarks', passport.authenticate('jwt', {session: false}), (req, res) => {
+    console.log(req.body)
+
+    User.findById(req.body.userId)
+    .then(user => {
+        // console.log(user)
+        user.marks.push({
+            name: req.body.name,
+            marksObtained: req.body.marksObtained,
+            totalMarks: req.body.totalMarks
+        })
+        user.save()
+        .then(updatedUser => {
+            console.log(updatedUser);
+        })
+    })
+}); 
+
+//@route GET api/users/updateMarks
+//@desc Return current user
+//@access Private
+router.get('/getGrades', passport.authenticate('jwt', {session: false}), (req, res) => {
+    console.log(req.body)
+
+    User.findById(req.user._id)
+    .then(user => {
+        res.json(user.marks)
+    })
+}); 
+
+
+
+
 module.exports = router;

@@ -96,3 +96,14 @@ export const setQuizIndex = (quizIndex, history) => {
         history.push('/dashboard/courses/takeQuiz');
     }
 }
+
+export const submitMarks = (quizMarks) => {
+    console.log(quizMarks)
+    return dispatch => {
+        return axios.post('/api/users/updateMarks', quizMarks)
+        .then(response => {
+            console.log(response);
+            // dispatch(questions(response.data));
+        })
+    }
+}

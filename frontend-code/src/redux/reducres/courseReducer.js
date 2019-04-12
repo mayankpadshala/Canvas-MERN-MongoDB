@@ -1,4 +1,4 @@
-import { SET_SELECTED_COURSE, GET_COURSE_QUIZES, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT, SET_QUIZ_INDEX } from '../actions/types'
+import { SET_SELECTED_COURSE, GET_COURSE_QUIZES, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT, SET_QUIZ_INDEX, SET_USER_GRADES } from '../actions/types'
 
 const initialState = {
     selectedCourse: null,
@@ -7,6 +7,7 @@ const initialState = {
     quizzes: null,
     errorMessage: '',
     quizIndex: null,
+    grades: null
 }
 
 export default function(state = initialState, action) {
@@ -47,6 +48,12 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 quizIndex: action.payload
+            }
+        }
+        case SET_USER_GRADES : {
+            return {
+                ...state,
+                grades: action.payload
             }
         }
         case "QUIZ_INFO" : 
