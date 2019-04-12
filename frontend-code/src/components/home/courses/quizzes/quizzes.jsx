@@ -138,7 +138,6 @@ class Quizzes extends React.Component {
   };
 
   componentWillMount = () => {
-    let propsData = {};
     const token = localStorage.jwtToken;
     const decoded = jwt_decode(token);
     // console.log(decoded);
@@ -268,12 +267,12 @@ class Quizzes extends React.Component {
 
  showQuiz = (e, quizIndex) => {
    e.preventDefault();
-   this.props.setQuizIndex(quizIndex)
-   this.setState({
-     redirectVar : <Redirect to={{
-        pathname: "/dashboard/courses/takeQuiz",
-     }}></Redirect>
-   })
+   this.props.setQuizIndex(quizIndex, this.props.history)
+  //  this.setState({
+  //    redirectVar : <Redirect to={{
+  //       pathname: "/dashboard/courses/takeQuiz",
+  //    }}></Redirect>
+  //  })
 
  } 
 
@@ -283,7 +282,9 @@ class Quizzes extends React.Component {
       // this.setState({
       //   createQuiz : false
       // })
+      console.log(this.state)
       const data = {
+        courseId : this.state.courseId,
         quizId: this.state.quizID,
         question : this.state.question,
         correctAnswer : this.state.correctAnswer,
@@ -293,11 +294,12 @@ class Quizzes extends React.Component {
         option3 : this.state.option3,
         option4 : this.state.option4
       }
+
       console.log(data);
 
       this.props.createQuestion(data)
       .then(response => {
-        console.log(this.props);
+        // console.log(this.props);
         const propsData = this.props.quizData.CourseReducer.CourseReducer;
         this.setState({
           quizzes : propsData.quizzes,
@@ -328,13 +330,13 @@ class Quizzes extends React.Component {
     const types = ['Multiple Choice Question', 'Essay Question']
 
       // const quizzes = this.props.selectedCourse.selectedCourse.course.quizes
-      console.log(this.props.selectedCourse.quizzes)
+      // console.log(this.props.selectedCourse.quizzes)
 
       const quizzes = this.props.selectedCourse.quizzes
     
     return (
       <div style={{marginTop: '32px'}}>
-        {this.state.redirectVar}
+        {/* {this.state.redirectVar} */}
         <div className={classes.root} >
             <Typography variant="h6" className={classes.textColor1} noWrap>
                 {header}

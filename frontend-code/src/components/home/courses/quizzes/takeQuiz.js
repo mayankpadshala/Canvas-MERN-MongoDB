@@ -6,14 +6,17 @@ import {Typography, Button, Paper, TextField, AppBar, Tabs, Tab} from '@material
 import {Radio, RadioGroup, FormControl, FormLabel, FormControlLabel, FormHelperText, Input, InputLabel} from '@material-ui/core';
 import {Route, Switch, Link, withRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
+import jwt_decode from 'jwt-decode';
 import { bindActionCreators } from 'redux';
 import {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex} from '../../../../redux/actions/quizAction';
+
+import {courseSection} from '../../../../redux/actions/courseActions'
 
 const styles = theme => ({
   root1: {
     boxShadow: 'none',
     width: '100%',
-    marginTop: theme.spacing.unit * 5,
+    marginTop: theme.spacing.unit * 25,
 },
 root: {
   boxShadow: 'none',
@@ -102,27 +105,32 @@ TabContainer.propTypes = {
 
 class TakeQuiz extends React.Component {
   state = {
+    userId: '',
     is_student: '',
     questionsList : '',
     answerList: [],
     answer: '',
     quizScore: '',
-    message: ''
+    message: '',
+    displayingQuiz: null
   };
 
   componentWillMount = () => {
+    const token = localStorage.jwtToken;
+    const decoded = jwt_decode(token);
     const propsData = this.props.selectedCourse.quizzes
     const quizIndex = this.props.selectedCourse.quizIndex;
     
     console.log(quizIndex)
+    this.setState({
+      userId: decoded._id,
+      is_student: decoded.faculty,
+      displayingQuiz : propsData[quizIndex].quiz,
+      questionsList : propsData[quizIndex].quiz.questions,
+      answerList : new Array(propsData[quizIndex].quiz.questions.length),
+    })
 
-    // this.setState({
-    //   questionsList : propsData.quizzes[quizIndex].QUESTIONS,
-    //   answerList : new Array(propsData.quizzes[quizIndex].QUESTIONS.length),
-    //   is_student : this.props.quizData.LoginReducer.LoginReducer.is_student
-    // })
-
-    // console.log(this.state.answerList);
+    // console.log(propsData[quizIndex].quiz)
     
   }
 
@@ -135,8 +143,8 @@ class TakeQuiz extends React.Component {
     this.setState({ 
       answer : e.target.value
     });
-    console.log("Hello");
-    console.log(text);
+    // console.log("Hello");
+    // console.log(text);
     this.state.answerList[text] = e.target.value;
     this.forceUpdate();
   };
@@ -149,13 +157,13 @@ class TakeQuiz extends React.Component {
 
 submitQuiz = (e) => {
   e.preventDefault();
-  console.log("Hello");
+  // console.log("Hello");
   console.log(this.state.answerList);
 
   let count = 0;
   for(let i = 0; i<this.state.answerList.length; i++)
   {
-    if(this.state.answerList[i] === this.state.questionsList[i].ANSWER)
+    if(this.state.answerList[i] === this.state.questionsList[i].answer)
     {
       count = count + 1;
     }
@@ -164,6 +172,9 @@ submitQuiz = (e) => {
     quizScore : count*2,
     message: "Your Score is " + count*2 + " out of 10",
   })
+
+  
+
 }
 
   render() {
@@ -178,69 +189,91 @@ submitQuiz = (e) => {
             </Typography>
             
         </div>
-        <Paper className={classes.paperClass}>
-            <label className={classes.successMsg}>{this.state.message}</label>
-              <form  className={classes.container}>
-                <div>
-                {Object.keys(this.state.questionsList).map((text, index) => (
-                <Grid
-                container
-                direction="row"
-                // justify="center"
-                alignItems="left"
-                className={classes.bgPaper}
-                >
-                  
-                  <div style={{display: this.state.questionsList[text].QUESTION_TYPE == 'Essay Question' ? 'block' : 'none'}}>
-                    <FormControl>
-                      <label>{this.state.questionsList[text].QUESTION}</label>
-                      <Input id={text} aria-describedby="my-helper-text" 
-                      value={this.state.answerList[text]}
-                      onChange={(e) => this.handleChange(text, e)}/>
-                    </FormControl>
-                  </div>
+        {
+          this.state.message === ""
+          ?
+          <Paper className={classes.paperClass}>
+        <label className={classes.successMsg}>{this.state.message}</label>
+          <form  className={classes.container}>
+            <div>
+            {Object.keys(this.state.questionsList).map((text, index) => (
+            <Grid
+            container
+            direction="row"
+            // justify="center"
+            alignItems="left"
+            className={classes.bgPaper}
+            >
+              
+              <div style={{display: this.state.questionsList[text].questionType == 'Essay Question' ? 'block' : 'none'}}>
+                <FormControl>
+                  <label>{this.state.questionsList[text].question}</label>
+                  <Input id={text} aria-describedby="my-helper-text" 
+                  value={this.state.answerList[text]}
+                  onChange={(e) => this.handleChange(text, e)}/>
+                </FormControl>
+              </div>
 
-                  <div style={{display: this.state.questionsList[text].QUESTION_TYPE == 'Multiple Choice Question' ? 'block' : 'none'}}>
-                    <FormControl component="fieldset" className={classes.formControl}>
-                      <FormLabel component="legend">{this.state.questionsList[text].QUESTION}</FormLabel>
-                        <RadioGroup
-                          aria-label=""
-                          name=""
-                          id={text}
-                          className={classes.group}
-                          value={this.state.answerList[text]}
-                          onChange={(e) => this.handleChange(text, e)}
-                        >
-                          <FormControlLabel value={this.state.questionsList[text].OPTION1} 
-                            control={<Radio color="primary" />}
-                            label={this.state.questionsList[text].OPTION1} />
-                          <FormControlLabel value={this.state.questionsList[text].OPTION2} 
-                            control={<Radio color="primary" />}
-                          label={this.state.questionsList[text].OPTION2} />
-                          <FormControlLabel value={this.state.questionsList[text].OPTION3} 
-                            control={<Radio color="primary" />} 
-                            label={this.state.questionsList[text].OPTION3} />
-                          <FormControlLabel value={this.state.questionsList[text].OPTION4} 
-                            control={<Radio color="primary" />} 
-                            label={this.state.questionsList[text].OPTION4} />
-                        </RadioGroup>
-                    </FormControl>
-                  </div>
-                </Grid>
-                ))}
-                
-                  <Button 
-                    style={{display : this.state.is_student && (this.state.message == '') ? 'inline' : 'none'}}
-                    type="submit" variant="contained" color="primary" className={classes.button}
-                    // style={{display : this.state.is_student == "false" ? 'block' : 'none'}}
-                    onClick={this.submitQuiz}
+              <div style={{display: this.state.questionsList[text].questionType == 'Multiple Choice Question' ? 'block' : 'none'}}>
+                <FormControl component="fieldset" className={classes.formControl}>
+                  <FormLabel component="legend">{this.state.questionsList[text].question}</FormLabel>
+                    <RadioGroup
+                      aria-label=""
+                      name=""
+                      id={text}
+                      className={classes.group}
+                      value={this.state.answerList[text]}
+                      onChange={(e) => this.handleChange(text, e)}
                     >
-                      Submit Quiz
-                  </Button>
-                </div>
-              </form>
-      
-          </Paper>
+                      <FormControlLabel value={this.state.questionsList[text].option1} 
+                        control={<Radio color="primary" />}
+                        label={this.state.questionsList[text].option1} />
+                      <FormControlLabel value={this.state.questionsList[text].option2} 
+                        control={<Radio color="primary" />}
+                      label={this.state.questionsList[text].option2} />
+                      <FormControlLabel value={this.state.questionsList[text].option3} 
+                        control={<Radio color="primary" />} 
+                        label={this.state.questionsList[text].option4} />
+                      <FormControlLabel value={this.state.questionsList[text].option4} 
+                        control={<Radio color="primary" />} 
+                        label={this.state.questionsList[text].option4} />
+                    </RadioGroup>
+                </FormControl>
+              </div>
+            </Grid>
+            ))}
+            
+              {
+                !this.state.is_student
+                ?
+                <Button 
+                type="submit" variant="contained" color="primary" className={classes.button}
+                // style={{display : this.state.is_student == "false" ? 'block' : 'none'}}
+                onClick={this.submitQuiz}
+                >
+                  Submit Quiz
+                </Button>
+              :
+              <div></div>
+
+              }
+            </div>
+          </form>
+  
+          
+      </Paper>
+          :
+          <div>
+            <label className={classes.successMsg}>{this.state.message}</label>
+            <Button 
+                type="submit" variant="contained" color="primary" className={classes.button}
+                // style={{display : this.state.is_student == "false" ? 'block' : 'none'}}
+                onClick={() => this.props.courseSection('quizzes', this.props.history)}
+                >
+                  Back
+            </Button>
+          </div>
+        }
       </div>
     );
   }
@@ -260,4 +293,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps, {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex})(withStyles(styles, { withTheme: true })(withRouter(TakeQuiz)));
+export default connect(mapStateToProps, {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex, courseSection})(withStyles(styles, { withTheme: true })(withRouter(TakeQuiz)));

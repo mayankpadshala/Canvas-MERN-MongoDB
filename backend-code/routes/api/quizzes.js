@@ -69,7 +69,7 @@ router.post('/create', passport.authenticate('jwt', {session: false}), (req, res
                         Course.findOne({
                             courseId: req.body.data.courseId
                         })
-                        .populate('quizes')
+                        .populate('quizes.quiz')
                         .exec((err, newCourse) => {
                             if(err)
                                 throw err;
@@ -125,20 +125,23 @@ router.post('/question/create', passport.authenticate('jwt', {session: false}), 
                     questionType : req.body.data.questionType
                 }
             }
-            
+            console.log(question)
             quiz.questions.push(question);
             quiz.save()
             .then(q => {
                 Course.findOne({
                     courseId : req.body.data.courseId
                 })
-                .populate('quizes')
+                .populate('quizes.quiz')
                 .exec((err, course) => {
                     if(err)
                         throw err;
                     else
                     res.json({course})
                 })
+            })
+            .catch(err => {
+                console.log(err);
             })
         }
     })
@@ -165,6 +168,8 @@ router.post('/getquizzes', passport.authenticate('jwt', {session: false}), (req,
             {
                 console.log(course.quizes);
                 res.json({course});
+            } else {
+
             }
         }
     })

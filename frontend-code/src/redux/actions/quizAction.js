@@ -29,7 +29,11 @@ export const createQuiz = (data) => {
         return axios.post('/api/quiz/create', {data})
         .then(response => {
             console.log(response);
-            dispatch(quizInfo(response.data))
+            // dispatch({
+            //     type: SET_SELECTED_COURSE,
+            //     payload: response.data
+            // })
+            dispatch(quizInfo(response.data.course.quizes))
             const token = localStorage.jwtToken
             //Set token to auth header
             setAuthToken(token);
@@ -43,7 +47,11 @@ export const createQuestion = (data) => {
         return axios.post('/api/quiz/question/create', {data})
         .then(response => {
             console.log(response);
-            dispatch(quizInfo(response.data))
+            // dispatch({
+            //     type: SET_SELECTED_COURSE,
+            //     payload: response.data
+            // })
+            dispatch(quizInfo(response.data.course.quizes))
             const token = localStorage.jwtToken
             //Set token to auth header
             setAuthToken(token);
@@ -57,6 +65,7 @@ export const getQuizzes = (data) => {
          axios.post('/api/quiz/getquizzes', {data})
         .then(response => {
             console.log(response.data);
+
             dispatch(quizInfo(response.data.course.quizes))
             
             const token = localStorage.jwtToken
@@ -78,11 +87,12 @@ export const getQuestions = (data) => {
     }
 }
 
-export const setQuizIndex = (quizIndex) => {
+export const setQuizIndex = (quizIndex, history) => {
     return dispatch => {
         dispatch ({
             type: SET_QUIZ_INDEX,
             payload: quizIndex,
         })
+        history.push('/dashboard/courses/takeQuiz');
     }
 }
