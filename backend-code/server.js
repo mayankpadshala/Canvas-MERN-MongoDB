@@ -17,6 +17,7 @@ const profiles = require('./routes/api/profiles');
 const posts = require('./routes/api/posts');
 const courses = require('./routes/api/courses')
 const files = require('./routes/api/fileHandling')
+const quiz = require('./routes/api/quizzes')
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://52.8.7.74:3000', credentials: true }));
@@ -37,6 +38,7 @@ app.use('/api/profiles', profiles);
 app.use('/api/posts', posts);
 app.use('/api/courses', courses);
 app.use('/api/files', files);
+app.use('/api/quiz', quiz);
 
 // // Using session for auth
 // const session = require('express-session');

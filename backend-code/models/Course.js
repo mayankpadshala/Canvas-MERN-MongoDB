@@ -56,6 +56,14 @@ const CourseSchema = new mongoose.Schema({
             }
         }
     ],
+    quizes: [
+        {
+            quiz: {
+                type: Schema.Types.ObjectId,
+                ref: 'quizes',
+            }
+        }
+    ],
     announcement: [
         {
             user: {

@@ -1,9 +1,12 @@
-import { SET_SELECTED_COURSE, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT } from '../actions/types'
+import { SET_SELECTED_COURSE, GET_COURSE_QUIZES, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT, SET_QUIZ_INDEX } from '../actions/types'
 
 const initialState = {
     selectedCourse: null,
     courseClicked: null,
-    assignmentDisplayed: null
+    assignmentDisplayed: null,
+    quizzes: null,
+    errorMessage: '',
+    quizIndex: null,
 }
 
 export default function(state = initialState, action) {
@@ -34,6 +37,74 @@ export default function(state = initialState, action) {
             ...state,
             submittingAssignment : action.payload
         }
+        case GET_COURSE_QUIZES : 
+        return {
+            ...state,
+            quizzes: action.payload
+        }
+
+        case SET_QUIZ_INDEX : {
+            return {
+                ...state,
+                quizIndex: action.payload
+            }
+        }
+        case "QUIZ_INFO" : 
+            console.log(action.payload);
+            if(action.payload.course)
+            {
+                state = {
+                    ...state,
+                    quizzes : action.payload.course.quizes,
+                    errorMessage : ''
+                }
+            }
+            else
+            {
+                state = {
+                    ...state,
+                    errorMessage : action.payload.error.message,
+                }
+            }
+            break; 
+
+        case "QUESTION_INFO" : 
+            console.log(action.payload);
+            if(action.payload.course)
+            {
+                state = {
+                    ...state,
+                    quizzes : action.payload.course.QUIZZES,
+                    errorMessage : ''
+                }
+            }
+            else
+            {
+                state = {
+                    ...state,
+                    errorMessage : action.payload.status,
+                }
+            }
+            break; 
+
+        case "QUESTIONS" : 
+            console.log(action.payload);
+            if(action.payload.quiz)
+            {
+                state = {
+                    ...state,
+                    quizzes : action.payload.quiz,
+                    errorMessage : ''
+                }
+            }
+            else
+            {
+                state = {
+                    ...state,
+                    errorMessage : action.payload.status,
+                }
+            }
+            break;
         default:
             return state;
     }

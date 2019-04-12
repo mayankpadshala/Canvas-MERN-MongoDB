@@ -33,6 +33,7 @@ import People from './People/people'
 import Files from './files/files'
 import Quizzes from './quizzes/quizzes'
 import AddCode from './addCode/addcode'
+import TakeQuiz from './quizzes/takeQuiz'
 
 const drawerWidth = 240;
 
@@ -266,6 +267,12 @@ class CourseMain extends Component {
                   <Route  path='/dashboard/courses/addcode' 
                              render={()=> {
                               return <AddCode/>
+                             }}
+                    />
+
+                  <Route  path='/dashboard/courses/takequiz' 
+                             render={()=> {
+                              return <TakeQuiz/>
                              }}
                     />
                                       

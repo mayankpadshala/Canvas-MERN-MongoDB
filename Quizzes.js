@@ -7,18 +7,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import {Route, Switch, Link, withRouter} from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import SwipeableViews from 'react-swipeable-views';
 import {Typography, Button, Paper, TextField, AppBar, Tabs, Tab} from '@material-ui/core';
 import {Radio, RadioGroup, FormControl, FormLabel, FormControlLabel, FormHelperText} from '@material-ui/core';
 import {connect} from 'react-redux';
-import jwt_decode from 'jwt-decode';
 import { bindActionCreators } from 'redux';
-import {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex} from '../../../../redux/actions/quizAction';
+import * as quizData from '../../actions/quizAction';
 import {Redirect} from 'react-router'
-import { decode } from 'punycode';
 
 const styles = theme => ({
   root1: {
@@ -30,7 +27,6 @@ root: {
   boxShadow: 'none',
   width: '100%',
   marginTop: theme.spacing.unit * 10,
-  marginLeft: theme.spacing.unit * 15,
 },
 formControl: {
   margin: theme.spacing.unit * 3,
@@ -111,7 +107,7 @@ class Quizzes extends React.Component {
   state = {
     value: 0,
     open: true,
-    is_student: true,
+    is_student: '',
     sjsuID: '',
     courseId: '',
     createQuiz: '',
@@ -138,40 +134,37 @@ class Quizzes extends React.Component {
   };
 
   componentWillMount = () => {
-    let propsData = {};
-    const token = localStorage.jwtToken;
-    const decoded = jwt_decode(token);
-    // console.log(decoded);
-
-    // console.log(this.props.selectedCourse.selectedCourse.courseId)
+    let propsData = this.props.quizData.CourseReducer.CourseReducer;
+    // const data = {
+    //   courseId: window.sessionStorage.getItem('courseId'),
+    //   sjsuID: window.sessionStorage.getItem('sjsuID'),
+    // }
 
     this.setState({
-      courseId: this.props.selectedCourse.selectedCourse.courseId,
-      is_student: decoded.faculty,
-      sjsuID: decoded.sjsuId
+      courseId: window.sessionStorage.getItem('courseId'),
+      sjsuID: window.sessionStorage.getItem('sjsuID'),
+      is_student: window.sessionStorage.getItem('is_student'),
     })
 
     const data = {
-      courseId : this.props.selectedCourse.selectedCourse.courseId,
+      courseId : propsData.courseId,
     }
     
     this.props.getQuizzes(data)
-    // .then(response => {
-    //   console.log(response);
-    //   propsData = this.props.selectedCourse.selectedCourse.course
-    //   console.log(propsData)
-    //   if(propsData)
-    //   {
-    //     console.log(propsData);
-    //     this.setState({
-    //       quizzes : propsData.quizes
-    //     })
-    //   }
+    .then(response => {
+      propsData = this.props.quizData.CourseReducer.CourseReducer;
+      if(propsData)
+      {
+        console.log(propsData);
+        this.setState({
+          quizzes : propsData.quizzes
+        })
+      }
 
-    // })
-    // .catch(error => {
-    //   console.log(error)
-    // })
+    })
+    .catch(error => {
+      console.log(error)
+    })
   }
 
   checkQuestionType  = (e) => {
@@ -226,16 +219,8 @@ class Quizzes extends React.Component {
   // this.setState({
   //   createQuiz : false
   // })
-  const data = {
-        quizId: this.state.quizID,
-        courseId: this.state.courseId,
-        createdBy: this.state.createdBy,
-        dueDate: this.state.dueDate,
-        totalPoints: this.state.totalPoints
-  }
- 
+  const data = this.state;
   console.log(data);
-  
   this.props.createQuiz(data)
   .then(response => {
     console.log(this.props.quizData);
@@ -257,8 +242,8 @@ class Quizzes extends React.Component {
         successMessage: 'Quiz created successfully!!! Now add the questions.'
       })
     }
-  }    
-  )
+    
+  })
   .catch(error => {
     console.log(error);
     
@@ -268,10 +253,11 @@ class Quizzes extends React.Component {
 
  showQuiz = (e, quizIndex) => {
    e.preventDefault();
-   this.props.setQuizIndex(quizIndex)
+   console.log("Hel");
    this.setState({
      redirectVar : <Redirect to={{
-        pathname: "/dashboard/courses/takeQuiz",
+        pathname: "/course/takequiz",
+        quizIndex: quizIndex
      }}></Redirect>
    })
 
@@ -283,16 +269,7 @@ class Quizzes extends React.Component {
       // this.setState({
       //   createQuiz : false
       // })
-      const data = {
-        quizId: this.state.quizID,
-        question : this.state.question,
-        correctAnswer : this.state.correctAnswer,
-        questionType : this.state.questionType,
-        option1 : this.state.option1,
-        option2 : this.state.option2,
-        option3 : this.state.option3,
-        option4 : this.state.option4
-      }
+      const data = this.state;
       console.log(data);
 
       this.props.createQuestion(data)
@@ -327,11 +304,6 @@ class Quizzes extends React.Component {
     const header = "Quizzes"
     const types = ['Multiple Choice Question', 'Essay Question']
 
-      // const quizzes = this.props.selectedCourse.selectedCourse.course.quizes
-      console.log(this.props.selectedCourse.quizzes)
-
-      const quizzes = this.props.selectedCourse.quizzes
-    
     return (
       <div style={{marginTop: '32px'}}>
         {this.state.redirectVar}
@@ -339,18 +311,18 @@ class Quizzes extends React.Component {
             <Typography variant="h6" className={classes.textColor1} noWrap>
                 {header}
             </Typography>
-            <div>
+            <div style={{display: window.sessionStorage.getItem('is_student') == 'true' ? 'none' : 'initial'}}>
               {
-                this.state.is_student 
-                ? 
-                <Button type="submit" variant="contained" color="primary" className={classes.button}
-                  onClick={this.showCreate}
-                  style={{display: this.state.createQuiz ? 'none' : 'initial'}}
-                >
+              this.state.is_student 
+              ? 
+              <Button type="submit" variant="contained" color="primary" className={classes.button}
+                onClick={this.showCreate}
+                style={{display: this.state.createQuiz ? 'none' : 'initial'}}
+              >
                 Create Quiz
-                </Button> 
-                : 
-                <div></div> 
+              </Button>
+              :
+              <div></div>
               }
             </div>
         </div>
@@ -637,7 +609,7 @@ class Quizzes extends React.Component {
           <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.listItemText}>
                 
                     {/* {[['Quiz1', 'Due date', 'Time', 'points'], ['Quiz2', 'Due date', 'Time', 'points'], ['Quiz3', 'Due date', 'Time', 'points'], ['Quiz4', 'Due date', 'Time', 'points'] ].map((text, index) => ( */}
-                      {Object.keys(quizzes).map((text, index) => (
+                      {Object.keys(this.state.quizzes).map((text, index) => (
                         <div>
                         <Grid
                             container
@@ -657,12 +629,12 @@ class Quizzes extends React.Component {
                                     alignItems="flex-start"
                                 >
                                     <Typography variant="h6" gutterBottom>
-                                        <strong>{quizzes[text].quiz.quizId}</strong>
+                                        <strong>{this.state.quizzes[text].QUIZ_ID}</strong>
                                     </Typography>
                                     <Typography variant="body1" gutterBottom>
                                         {/* <strong>Available until</strong> {text[1]} |&nbsp; */}
-                                        <strong>Due Date</strong> {quizzes[text].quiz.dueDate} |&nbsp;
-                                        <strong>{quizzes[text].quiz.totalPoints}</strong> pts
+                                        <strong>Due Date</strong> {this.state.quizzes[text].DUE_DATE} |&nbsp;
+                                        <strong>{this.state.quizzes[text].TOTAL_POINTS}</strong> pts
                                     </Typography>
 
                                 </Grid>
@@ -675,21 +647,19 @@ class Quizzes extends React.Component {
                                     justify="flex-start"
                                     alignItems="flex-start"
                                 >
-                                { !this.state.is_student ?
                                     <Button 
                                     type="submit" variant="contained" color="primary" className={classes.button}
-                                    // style={{display : this.state.is_student == "true" ? 'block' : 'none'}}
+                                    style={{display : this.state.is_student == "true" ? 'block' : 'none'}}
                                     onClick={(e) => this.showQuiz(e, text)}>
                                       Take Quiz
                                     </Button>
-                                    :
                                     <Button 
                                     type="submit" variant="contained" color="primary" className={classes.button}
-                                    // style={{display : this.state.is_student === "false" ? 'block' : 'none'}}
+                                    style={{display : this.state.is_student == "false" ? 'block' : 'none'}}
                                     onClick={(e) => this.showQuiz(e, text)}>
                                       View Quiz
                                     </Button>
-                                }
+
                                 </Grid>
 
                             </Grid>
@@ -712,15 +682,15 @@ class Quizzes extends React.Component {
 Quizzes.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  nav: PropTypes.object.isRequired,
-  selectedCourse: PropTypes.object.isRequired,
 };
-  
 
-const mapStateToProps = (state) => ({
-  nav : state.nav,
-  selectedCourse : state.selectedCourse
-})
+const mapStateToProps = (state) => {
+  return{
+    quizData : state
+  }
+}
 
-
-export default connect(mapStateToProps, {quizInfo, questionInfo, questions, createQuiz, createQuestion, getQuizzes, getQuestions, setQuizIndex})(withStyles(styles, { withTheme: true })(withRouter(Quizzes)));
+const mapDispacthToProps = (dispatch) => {
+  return bindActionCreators(quizData, dispatch);
+}
+export default connect(mapStateToProps, mapDispacthToProps)(withStyles(styles, { withTheme: true })(Quizzes));
