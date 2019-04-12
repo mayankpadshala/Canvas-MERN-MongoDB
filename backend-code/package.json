@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node server.js",
     "server": "nodemon server.js",
+    "kafka": "cd ../kafka-backend && nodemon index.js",
     "client": "cd ../frontend-code && npm start",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "start": "concurrently --kill-others-on-fail \"npm run kafka\" \"npm run server\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
