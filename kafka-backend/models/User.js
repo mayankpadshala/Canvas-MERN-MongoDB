@@ -34,6 +34,27 @@ const UserSchema = new Schema({
           }
         }
       ],
+      
+    marks: [
+        {
+          name: {
+              type: String
+          },
+          marksObtained: {
+              type: Number
+          },
+          totalMarks: {
+              type: Number
+          }
+        }
+      ],
+    RECEIVED_MESSAGES:[
+        {
+            MESSAGE: String,
+            Date: Date,
+            FROM: String,
+        }
+    ],
     date: {
         type: Date,
         default: Date.now

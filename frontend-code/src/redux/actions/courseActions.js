@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {GET_ERRORS, SET_SELECTED_COURSE, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT,GET_USER_PROFILE, SET_USER_GRADES} from './types';
+import {GET_ERRORS, SET_SELECTED_COURSE, SET_SELECTION_COURSE, SET_COURSE_SECTION, DISPLAY_ASSIGNMENT, SUBMIT_ASSIGNMENT,GET_USER_PROFILE, SET_USER_GRADES, SET_CURRENT_USER} from './types';
 import setAuthToken from '../../utils/setAuthToken'
 
 //Register User
@@ -237,6 +237,58 @@ export const setGrades = () => dispatch => {
     .catch(err => {
         console.log(err)
     })
+
+    const token = localStorage.jwtToken
+    //Set token to auth header
+    setAuthToken(token);
+}
+
+export const sendMessage = (message) => dispatch => {
+
+    const msgData = {
+        sendTo: message.sendTo,
+        message: message.message,
+    }
+
+    // console.log(msgData)
+
+    axios
+        .post('/api/messages/send/message', msgData)
+        .then(res => {
+            // dispatch({
+            //     type: SET_CURRENT_USER,
+            //     payload: res.data.user
+            // })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
+    const token = localStorage.jwtToken
+    //Set token to auth header
+    setAuthToken(token);
+}
+
+export const sendMessageInbox = (message) => dispatch => {
+
+    const msgData = {
+        sendTo: message.sendTo,
+        message: message.message,
+    }
+
+    // console.log(msgData)
+
+    axios
+        .post('/api/messages/send/messageInbox', msgData)
+        .then(res => {
+            // dispatch({
+            //     type: SET_CURRENT_USER,
+            //     payload: res.data.user
+            // })
+        })
+        .catch(err => {
+            console.log(err)
+        })
 
     const token = localStorage.jwtToken
     //Set token to auth header

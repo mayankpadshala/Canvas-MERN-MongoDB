@@ -136,7 +136,7 @@ function handle_request(msg, callback){
                         // res.json({msg: "Success"})
                         //User matched
 
-                        const payload = { id : user.id, fname: user.fname, lname: user.lname,email: user.email, sjsuId: user.sjsuId, avatar: user.avatar, faculty: user.faculty } //Create jwt payload to send with jwt token
+                        const payload = { id : user.id, fname: user.fname, lname: user.lname,email: user.email, sjsuId: user.sjsuId, avatar: user.avatar, faculty: user.faculty, RECEIVED_MESSAGES : user.RECEIVED_MESSAGES } //Create jwt payload to send with jwt token
 
                         //Sign token take in two parameters first is the payload that we created above and the secret key
                         jwt.sign(payload, secretOrKey, {expiresIn: 8*3600}, (err, token) => {

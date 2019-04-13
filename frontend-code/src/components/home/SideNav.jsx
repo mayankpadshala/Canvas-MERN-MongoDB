@@ -305,12 +305,14 @@ class SideNav extends Component {
                     </ListItem>
 
                     {/* Inbox */}
+                    <Link to="/dashboard/inbox" className={classes.link}>
                     <ListItem className={classes.flex_clm} onClick={this.handleChild1DrawerToggle} button >
                         <ListItemIcon className={classes.icon_set1} >
                             <img alt="dashboard" className={this.props.nav.sideNav? classes.manu_icon_svg_open : classes.manu_icon_svg} src={Inbox} /> 
                         </ListItemIcon>
                         <span className={classNames(classes.menu_item_name, {[classes.hide]: !this.props.nav.sideNav,})}  > Inbox</span>
                     </ListItem>
+                    </Link>
 
                     {/* Help */}
                     <ListItem className={classes.flex_clm} onClick={this.handleChild1DrawerToggle} button >

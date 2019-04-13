@@ -128,7 +128,7 @@ class Announcements extends Component {
                 className={classes.bgPaper}
                 >
                     <Typography variant="h6" gutterBottom> {announcement[key].title} </Typography>
-                    <Typography noWrap className={classes.textHidden} variant="subheading" > {announcement[key].title.description} </Typography>
+                    <Typography noWrap className={classes.textHidden} variant="subheading" > {announcement[key].description} </Typography>
                 </Grid>
                 
                 <Grid

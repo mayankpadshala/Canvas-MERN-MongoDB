@@ -10,6 +10,7 @@ import Home from './home'
 import CreateMain from './createCourse/CreateMain'
 import RegisterMain from './registerCourse/RegisterMain'
 import CourseMain from './courses/CourseMain'
+import Inbox from './inbox/Inbox'
 
 import {getCurrentProfile} from '../../redux/actions/profileActions'
 
@@ -48,6 +49,12 @@ class Dashboard extends Component {
               <Route path='/dashboard/courses' 
                   render={()=> {
                   return <CourseMain />
+                  }}
+              />
+
+              <Route path='/dashboard/inbox' 
+                  render={()=> {
+                  return <Inbox />
                   }}
               />
 

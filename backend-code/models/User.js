@@ -48,6 +48,14 @@ const UserSchema = new Schema({
           }
         }
       ],
+    RECEIVED_MESSAGES:[
+        {
+            MESSAGE: String,
+            Date: Date,
+            FROM: String,
+            FROM_SJSUID: String,
+        }
+    ],
     date: {
         type: Date,
         default: Date.now
