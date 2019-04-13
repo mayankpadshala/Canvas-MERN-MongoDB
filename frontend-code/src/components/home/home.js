@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import {Link, Redirect, withRouter} from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
@@ -21,6 +22,7 @@ import {connect} from 'react-redux';
 import {getEnrolledCourses} from '../../redux/actions/profileActions'
 import {getSelectedCourse} from '../../redux/actions/courseActions'
 
+import Draggable from 'react-draggable';
 
 const styles = {
   root_open: {
@@ -46,6 +48,12 @@ const styles = {
   },
   link: {
     textDecoration: 'none',
+  },
+  courseDetails: {
+    height: "auto",
+    textAlign: "left",
+    display: "block",
+    width: "100%",
   }
 };
 
@@ -54,6 +62,10 @@ const ITEM_HEIGHT = 48;
 
 class Home extends React.Component {
 
+  // eventLogger = (e: MouseEvent, data: Object) => {
+  //   console.log('Event: ', e);
+  //   console.log('Data: ', data);
+  // };
   
   componentWillMount(){
     //Get Enrolled Courses
@@ -183,50 +195,67 @@ class Home extends React.Component {
                 <div></div>}
           
             {
-              Object.keys(this.props.userProfile.enrolledCourses).map((key, index) => (            
-              <Grid item xs={4} key={key} >
+              Object.keys(this.props.userProfile.enrolledCourses).map((key, index) => (      
                 
-                    <Card className={classes.card} style={{margin: '16px'}} >
-                      <Button
-                        key={index}
-                        style={{textDecoration: 'none'}}  
-                        onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course._id, this.props.history)}}
-                      >
-                      <CardActionArea>
-                        <CardMedia
-                          style={{background: this.getRandomColor()}}
-                          className={classes.media}
-                          title="Contemplative Reptile"
-                        />
-                        <CardContent>
-                          {/* <Typography gutterBottom variant="h5" component="h2">
-                          {this.state.courses[key].DEPARTMENT + " " + this.state.courses[key].COURSEID + " : " +this.state.courses[key].CNAME + " "  }
-                          </Typography> */}
-                          <div>
-                            <h2>
-                              <span>{this.props.userProfile.enrolledCourses[key].course.courseName}</span>
-                            </h2>
+                <Grid item xs={4} key={key} >
+                    <Draggable
+                      // axis="x"
+                      // handle=".handle"
+                      defaultPosition={{x: 0, y: 0}}
+                      position={null}
+                      grid={[25, 25]}
+                      scale={1}
+                      onStart={this.handleStart}
+                      onDrag={this.handleDrag}
+                      onStop={this.handleStop}
+                    >
+                      <Card className={classes.card} style={{margin: '16px'}} >
+                        
+                        <CardActionArea>
+                          <CardMedia
+                            style={{background: this.getRandomColor()}}
+                            className={classes.media}
+                            title="Contemplative Reptile"
+                          />
+                          <CardContent>
+                            {/* <Typography gutterBottom variant="h5" component="h2">
+                            {this.state.courses[key].DEPARTMENT + " " + this.state.courses[key].COURSEID + " : " +this.state.courses[key].CNAME + " "  }
+                            </Typography> */}
                             <div>
-                              {this.props.userProfile.enrolledCourses[key].course.department} : {this.props.userProfile.enrolledCourses[key].course.courseId}
+                              <h2>
+                                <span>{this.props.userProfile.enrolledCourses[key].course.courseName}</span>
+                              </h2>
+                              <Button
+                                className={classes.courseDetails}
+                                key={index}  
+                                onClick={() => {this.props.getSelectedCourse(this.props.userProfile.enrolledCourses[key].course._id, this.props.history)}}
+                              >
+                              <div>
+                                {this.props.userProfile.enrolledCourses[key].course.department} : {this.props.userProfile.enrolledCourses[key].course.courseId}
+                              </div>
+                              <div>
+                                {this.props.userProfile.enrolledCourses[key].course.term}
+                              </div>
+                              </Button>
                             </div>
-                            <div>
-                            {this.props.userProfile.enrolledCourses[key].course.term}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </CardActionArea>
-                      <CardActions>
-                        {/* <Button size="small" color="primary" >
-                          Select
-                        </Button>
-                        <Button size="small" color="primary" >
-                          Learn More
-                        </Button> */}
-                      </CardActions>
-                    </Button>
-                    </Card>
-                </Grid>       
+                          </CardContent>
+                        </CardActionArea>
+                        <CardActions>
+                          {/* <Button size="small" color="primary" >
+                            Select
+                          </Button>
+                          <Button size="small" color="primary" >
+                            Learn More
+                          </Button> */}
+                        </CardActions>
+                      {/* </Button> */}
+                      </Card>
+                    </Draggable>
+                  </Grid>       
+                
               ))}
+
+              
           </Grid>
         </div>
 

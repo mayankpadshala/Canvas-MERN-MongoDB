@@ -80,12 +80,14 @@ class CreateMain extends Component {
   
         this.setState({
           id: decoded.id,
+          selectTerm : "Spring 2019"
         })
   
       }
 
       onChange = (e) => {
         this.setState({[e.target.name]: e.target.value});
+        
       }
 
       onSubmit = (e) => {
@@ -101,7 +103,7 @@ class CreateMain extends Component {
             courseRoom: this.state.courseRoom,
             courseCapacity: this.state.courseCapacity,
             waitlistCapacity: this.state.waitlistCapacity,
-            term: this.state.term,
+            term: this.state.selectTerm,
             createdBy: this.state.id
         }
         // console.log(courseDetails)
@@ -119,7 +121,6 @@ class CreateMain extends Component {
             "Fall 2019",
             "Spring 2020",
         ]
-        
 
             return (
                 

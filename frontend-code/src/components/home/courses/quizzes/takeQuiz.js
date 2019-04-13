@@ -60,7 +60,7 @@ bgPaper: {
   paperClass:{
     marginTop: 20,
     overflowX: "auto",
-    padding: '0% 5% 5%'
+    padding: '5% 5% 5% 5%'
   },
   button: {
     margin: theme.spacing.unit * 4 ,
