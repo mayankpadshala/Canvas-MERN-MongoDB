@@ -167,6 +167,7 @@ router.get('/current', passport.authenticate('jwt', {session: false}), (req, res
     // console.log(req.cookie);
     // console.log("================================");
     // console.log(req.session);
+    console.log('Return current User')
     res.json({
         id: req.user.id,
         fname: req.user.fname,
@@ -175,6 +176,19 @@ router.get('/current', passport.authenticate('jwt', {session: false}), (req, res
     });
 });
 
+//@route GET api/users/currentUser
+//@desc Return current user
+//@access Private
+router.get('/currentUser', (req, res) => {
+    // console.log(req.cookie);
+    // console.log("================================");
+    // console.log(req.session);
+    console.log('Return current User')
+    User.find()
+    .then(users => {
+        res.json(users)
+    })
+});
 
 //@route GET api/users/updateMarks
 //@desc Return current user

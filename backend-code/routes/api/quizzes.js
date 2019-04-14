@@ -151,7 +151,8 @@ router.post('/question/create', passport.authenticate('jwt', {session: false}), 
 //@desc Test Courses route
 //@access Public
 router.post('/getquizzes', passport.authenticate('jwt', {session: false}), (req, res) => {
-    // console.log(req.body)
+    console.log(req.body)
+    
     Course.findOne({
         courseId : req.body.data.courseId
     })
