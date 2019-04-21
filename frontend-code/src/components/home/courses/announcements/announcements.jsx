@@ -216,9 +216,15 @@ class Announcements extends Component {
 
             </Paper>
             :
-            <div>
-
-            </div>
+            <Paper className={classes.header}>
+              <Button 
+                variant="contained" 
+                className={classes.post} 
+                // type="submit" 
+                >
+                POSTED ANNOUNCEMNETS
+                </Button>
+            </Paper>
 
           }
 

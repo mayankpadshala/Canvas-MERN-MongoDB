@@ -125,20 +125,19 @@ export const deleteAssignment = (id, courseId, history) => dispatch =>{
 }
 
 export const displaySubmissions = (assignmentId, courseId, history) => dispatch => {
-    
-
     axios
     .post('/api/courses/displayAssignment', {id: assignmentId})
     .then(res => {
-        dispatch({
-        type: DISPLAY_ASSIGNMENT,
-        payload: res.data
-        })
         dispatch({
             type: SET_COURSE_SECTION,
             payload: 'displaySubmissions'
         })
         history.push(`/dashboard/courses/displaySubmissions`);
+        
+        dispatch({
+        type: DISPLAY_ASSIGNMENT,
+        payload: res.data
+        })
     })
 
     const token = localStorage.jwtToken
@@ -180,6 +179,17 @@ export const updateMarks = (assignId, submissionNumber, marks) => dispatch => {
         marks: marks        
     })
     .then(res => {
+
+        const data = {
+            submissionData: res.data.submission[0],
+            assignmentId : res.data._id
+        }
+
+        axios.post('/api/users/updateAssignmentMarks', data)
+        .then(response => {
+            console.log(response);
+        })
+
         dispatch({
             type: DISPLAY_ASSIGNMENT,
             payload: res.data

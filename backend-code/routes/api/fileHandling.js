@@ -109,7 +109,7 @@ router.post('/profileImage', passport.authenticate('jwt', {session: false}), (re
         console.log('Successfully renamed - AKA moved!')
         })
 
-        let fileUrl = "http://localhost:5000/uploads/profilePics/"+req.user.sjsuId + '/' + req.file.filename;
+        let fileUrl = "http://52.8.7.74:5000/uploads/profilePics/"+req.user.sjsuId + '/' + req.file.filename;
 
 
         const updatedProfileData = {
@@ -170,7 +170,7 @@ router.post('/uploadAssignment', passport.authenticate('jwt', {session: false}),
         })
 
         // console.log(err);
-        let fileUrl = "http://localhost:5000/uploads/course/assignment/"+req.user.sjsuId + '/' + req.file.filename;
+        let fileUrl = "http://52.8.7.74:5000/uploads/course/assignment/"+req.user.sjsuId + '/' + req.file.filename;
 
         const assignmentData = {
             title : req.body.title,
@@ -231,7 +231,7 @@ router.post('/uploadAssignmentSubmission', passport.authenticate('jwt', {session
         })
 
         // console.log(err);
-        let fileUrl = "http://localhost:5000/uploads/course/assignment/submission/"+req.body.assignmentId + '/' + req.file.filename;
+        let fileUrl = "http://52.8.7.74:5000/uploads/course/assignment/submission/"+req.body.assignmentId + '/' + req.file.filename;
 
         Assignment.findById(req.body.assignmentId)
         .then(assignment => {
@@ -297,7 +297,7 @@ router.post('/uploadAssignment',  (req, res) => {
         console.log(req.file);
         console.log(req.body);
         // console.log(err);
-        let fileUrl = "http://localhost:5000/uploads/Assignments/"+req.file.filename;
+        let fileUrl = "http://52.8.7.74:5000/uploads/Assignments/"+req.file.filename;
 
         const createAssignment = {
             COURSEID : req.body.COURSEID,
@@ -346,7 +346,7 @@ router.post('/deleteAssignment', (req, res) => {
 
 router.post('/submitAssignment', (req,res) => {
     uploadSubmission(req,res, (err) => {
-        let fileUrl = "http://localhost:5000/uploads/Assignments/Submissions/"+req.file.filename;
+        let fileUrl = "http://52.8.7.74:5000/uploads/Assignments/Submissions/"+req.file.filename;
 
         const assignmentSubmission = {
             COURSEID : req.body.COURSEID,
@@ -379,14 +379,7 @@ router.post('/getSubmissions', (req, res) => {
 
 /////File Structure implementation
 
-router.get("/getroutertructure", (req, res) => {
-    const tree = dirTree("../backend-code/public/uploads/");
-    console.log(tree.children);
-    resData = { status: 200, msg: "Success", data: tree };
-    res.json(resData);
-});
-
-router.post("/getroutertructure1", (req, res) => {
+router.post("/getFileStructure1", (req, res) => {
     console.log(req.body)
     const tree = dirTree(req.body.path);
     // const tree = dirTree(prePond+req.body.path);
@@ -394,6 +387,14 @@ router.post("/getroutertructure1", (req, res) => {
     // console.log(resData)
     res.json(resData);
 });
+
+router.get("/getFileStructure", (req, res) => {
+    const tree = dirTree("../backend-code/public/uploads/");
+    console.log(tree.children);
+    resData = { status: 200, msg: "Success", data: tree };
+    res.json(resData);
+});
+
 
 router.get("/download/:filePath(*)", (req, res) => {
     var filePath = "../"+req.params.filePath;

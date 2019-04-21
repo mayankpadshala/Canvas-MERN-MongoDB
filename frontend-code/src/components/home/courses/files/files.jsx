@@ -30,6 +30,7 @@ import jwt_decode from 'jwt-decode';
 const styles = theme => ({
   root: {
     backgroundColor: '#f0f0f0',
+    marginLeft: 200
 },
 folderMenuRoot: {
   width: "100%",
@@ -88,7 +89,7 @@ class Files extends Component {
             newFolderName: "",
         },
         formValid: false,
-        rootFolderPath : "../backend-code/public/uploads/",
+        rootFolderPath : "../backend-code/public/uploads/course",
         parentFolderPath : "../backend-code/public/uploads/",
         parenFolderFileStructure: [],
         selectedFolderPath: ''
@@ -101,12 +102,12 @@ handleClick = () => {
 };
 
 componentDidMount() {
-    const token = localStorage.usertoken;
+    const token = localStorage.jwtToken;
     const decoded = jwt_decode(token);
 
     this.setState({
       SJSUID: decoded.SJSUID,
-      FLAG: decoded.FLAG,
+      FLAG: !decoded.faculty,
       COURSEID: this.props.COURSEID,
     })
 
@@ -145,6 +146,8 @@ prepareFileStructure = (jsonArray,level) => {
       let res = jsonArray.map((item, key) => {
           return (
               <div key={key}>
+                {item.type === "directory" 
+                ?
                       <ListItem 
                       button 
                       style={{paddingLeft: (level*20)+"px"}}
@@ -164,6 +167,9 @@ prepareFileStructure = (jsonArray,level) => {
                           </ListItemIcon>
                           <ListItemText inset primary={item.name} />
                       </ListItem>
+                      :
+                      <div></div>
+                }
                   {
                       this.prepareFileStructure(item.children,level+1)
                   }
@@ -181,6 +187,10 @@ prepareFileStructureLvl0 = (jsonArray,level) => {
       let res = jsonArray.map((item, key) => {
           return (
               <div key={key}>
+                 {item.type === "directory" 
+                    ?
+                    <div></div>
+                    :
                       <ListItem 
                       button 
                       style={{paddingLeft: (level*10)+"px"}}
@@ -199,11 +209,13 @@ prepareFileStructureLvl0 = (jsonArray,level) => {
                           </ListItemIcon>
                           <ListItemText inset primary={item.name} />
                       </ListItem>
+                 }
                   {/* {
                       this.prepareFileStructure(item.children,level+1)
                   } */}
               </div>
-          );
+            
+              );
       })
   return res;
   }
@@ -253,6 +265,7 @@ handleNewFolderSubit = () => {
           }
       });
 };
+
 fileSelectedNowUpload = (e) =>{
   if (e.target.files.length === 1) {
       // console.log(e.target.files)
@@ -282,7 +295,7 @@ fileSelectedNowUpload = (e) =>{
     const { classes } = this.props;
 
     return (
-      <div>
+      <div style ={{margin: 84}}>
                 <Grid
                     container
                     direction="column"
@@ -304,7 +317,7 @@ fileSelectedNowUpload = (e) =>{
                                     htmlFor="newFolderInput"
                                     className="m-label-text"
                                 >
-                                    Course ID*
+                                    {/* Course ID* */}
                                 </label>
                                 <input
                                     type="text"

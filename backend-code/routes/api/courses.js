@@ -353,10 +353,11 @@ router.post('/getBycourseName',passport.authenticate('jwt', {session: false}),(r
 //@desc Send assignment data
 //@access Private
 router.post('/displayAssignment',passport.authenticate('jwt', {session: false}),(req, res) => {
-    
+    console.log(req.body)
     Assignment.findById(req.body.id)
     .populate('submission.submitedBy')
     .then(assign => {
+        console.log(assign)
         res.json(assign)
     })
 

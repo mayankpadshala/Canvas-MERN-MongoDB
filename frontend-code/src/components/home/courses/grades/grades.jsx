@@ -144,18 +144,6 @@ class Grades extends React.Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.keys(assignmens).map(key => (
-                    <TableRow className={classes.row} key={assignmens[key].assignment._id}>
-                      <CustomTableCell component="th" scope="row">
-                        {assignmens[key].assignment.title}
-                      </CustomTableCell>
-                      {/* <CustomTableCell align="right">{assignmens[key].assignment.dueDate}</CustomTableCell> */}
-                      <CustomTableCell align="right">{}</CustomTableCell>
-                      <CustomTableCell align="right">{}</CustomTableCell>
-                      <CustomTableCell align="right">{assignmens[key].assignment.totalPoints}</CustomTableCell>
-                      <CustomTableCell align="right"></CustomTableCell>
-                    </TableRow>
-                  ))}
                   {Object.keys(userGrades).map(key => (
                     <TableRow className={classes.row} key={userGrades[key]._id}>
                       <CustomTableCell component="th" scope="row">

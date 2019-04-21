@@ -107,12 +107,11 @@ function handle_request(msg, callback){
 
     const {errors, isValid} = validateLoginInput(msg);
 
-    var res = {};
-    console.log("In handle request:"+ JSON.stringify(msg));
+    // console.log("In handle request:"+ JSON.stringify(msg));
 
             // Check Validation
             if(!isValid) {
-                console.log("In is Valid")
+                // console.log("In is Valid")
                 callback(null, errors);
             }
 
@@ -150,13 +149,14 @@ function handle_request(msg, callback){
                         });
 
                     } else {
-                        callback(null,err );
+                        errors.password = "Password Incorrect";
+                        callback(null,errors );
                     }
                 })
 
             })
             .catch(err => {
-                console.log(err);
+                callback(null,err );
             })
     }
 

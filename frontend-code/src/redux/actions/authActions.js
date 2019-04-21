@@ -27,21 +27,35 @@ export const loginUser = (userData , history ) => dispatch => {
     .then(res => {
         console.log(res);
         //Save to local Storage
-        const {token} = res.data;
+        if(res.data.sjsuId !== "User not found"){
+            const {token} = res.data;
 
-        //Set token to local Storage
-        localStorage.setItem('jwtToken', token);
+            //Set token to local Storage
+            localStorage.setItem('jwtToken', token);
 
-        //Set token to auth header
-        setAuthToken(token);
+            //Set token to auth header
+            setAuthToken(token);
 
-        //Decode Token to get user data
-        const decoded = jwt_decode(token);
+            //Decode Token to get user data
+            const decoded = jwt_decode(token);
 
-        //Set Current User
-        dispatch(setCurrentUser(decoded));
+            //Set Current User
+            dispatch(setCurrentUser(decoded));
+            
+            dispatch({
+                type: GET_ERRORS,
+                payload: res.data
+            })
 
-        history.push('/dashboard')
+            history.push('/dashboard')
+            
+        } else {
+            dispatch({
+                type: GET_ERRORS,
+                payload: res.data
+            })
+
+        } 
         
     })
     .catch(err => {

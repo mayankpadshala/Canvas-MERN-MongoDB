@@ -18,6 +18,7 @@ import jwt_decode from 'jwt-decode';
 
 import { courseSection, updateMarks} from '../../../../redux/actions/courseActions'
 
+
 import PDF from "react-pdf-js";
 
 const styles = theme => ({
@@ -49,8 +50,9 @@ class DisplaySubmissions extends Component {
       fileshowing : ''
     }
 
-    componentWillMount() {
+    componentWillMount = () => {  
       const submission = this.props.selectedCourse.assignmentDisplayed.submission;
+      console.log(submission)
       this.setState({
         submissions : submission 
       })
@@ -118,6 +120,19 @@ class DisplaySubmissions extends Component {
         );
       }
 
+      // updateMarks = (assignmentId, file, marks) => {
+
+      //   const quizMarks = {
+      //     userId : this.state.userId,
+      //     name: "Quiz " + this.state.displayingQuiz.quizId,
+      //     marksObtained : marksObtained,
+      //     totalMarks : totalMarks
+      //   }
+      
+      //   this.props.submitMarks(quizMarks)
+
+      // }
+
 
   render() {
       
@@ -162,6 +177,7 @@ class DisplaySubmissions extends Component {
           <h6>Given Marks: {this.state.files[this.state.index][3]}</h6>
           <input type='text' onChange={this.getMarks}></input>
           <button onClick={() =>{this.props.updateMarks(this.props.selectedCourse.assignmentDisplayed._id, this.state.files[this.state.index][2], this.state.marks)}}>Submit Marks</button>
+          {/* <button onClick={() =>{this.updateMarks(this.props.selectedCourse.assignmentDisplayed._id, this.state.files[this.state.index][2], this.state.marks)}}>Submit Marks</button>        */}
         </div>
       </div>
         

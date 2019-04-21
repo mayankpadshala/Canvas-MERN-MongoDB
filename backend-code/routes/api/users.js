@@ -8,6 +8,9 @@ router.use(cors());
 //Load User Model
 const User = require('../../models/User');
 
+//Load Assignment Model
+const Assignment = require('../../models/Assignments');
+
 //Importing gravatar for user registration
 const gravatar = require('gravatar');
 
@@ -99,12 +102,12 @@ router.post('/register', (req, res) => {
 //@desc Login a User /Retunr token (jwt)
 //@access Public
 router.post('/login', (req, res) => {
-    // const {errors, isValid} = validateLoginInput(req.body);
+    const {errors, isValid} = validateLoginInput(req.body);
 
     // Check Validation
-    // if(!isValid) {
-    //     return res.status(400).json(errors);
-    // }
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
 
     // const sjsuId = req.body.sjsuId;
     // const password = req.body.password;
@@ -208,6 +211,39 @@ router.post('/updateMarks', passport.authenticate('jwt', {session: false}), (req
         .then(updatedUser => {
             console.log(updatedUser);
         })
+    })
+}); 
+
+//@route GET api/users/updateAssignmentMarks
+//@desc Return current user
+//@access Private
+router.post('/updateAssignmentMarks', passport.authenticate('jwt', {session: false}), (req, res) => {
+    console.log(req.body)
+    userId = req.body.submissionData.submitedBy;
+    assignmentName = ""
+    marksObtained = req.body.submissionData.marks
+    totalMarks = 10
+
+    User.findById(userId)
+    .then(user => {
+        // console.log(user)
+        Assignment.findById(req.body.assignmentId)
+        .then(assignment => {
+            const marksData = {
+                name: assignment.title,
+                marksObtained:marksObtained,
+                totalMarks: assignment.totalPoints
+            }
+            user.marks.push(marksData)
+            user.save()
+            .then(updatedUser => {
+                console.log(updatedUser);
+            })
+        })
+        
+
+
+       
     })
 }); 
 

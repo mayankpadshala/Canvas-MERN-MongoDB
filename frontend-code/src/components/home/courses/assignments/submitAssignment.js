@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import {submitUploadAssignment} from '../../../../redux/actions/courseActions'
 
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -67,7 +68,7 @@ class SubmitAssignment extends Component {
       <div className={classes.root}>
         
         <div>
-            <div className={classes.heading}>Select File to Submit : </div>
+            <div className={classes.heading}>Select File to Submit (*PDF Only) : </div>
             <div className={classes.heading}>
             <input type="file" onChange={this.setAssignmentSubmission}/>
             </div>
